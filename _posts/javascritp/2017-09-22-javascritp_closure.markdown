@@ -264,13 +264,317 @@ alert( counter2() ); // 0 (independant)
 {% endhighlight %}
 
 ## 环境详解
+现在，您了解闭包是如何工作的，我们终于可以坚持下去了。
 
+以下是makeCounter示例一步一步分析，以确保了解所有内容。请注意[[Environment]]我们尚未深究。
 
-![Lexical Environment][lexical environment 4]
+1、脚本刚刚开始，只有全局LE：
+
+![Lexical Environment][lexical environment 6]
+
+在起始时刻只有makeCounter函数，因为它是一个函数声明。它还没有运行
+
+所有函数“诞生时”都有一个隐藏[[Environment]]属性并且指向创建者。我们还没有深究它，但从技术上讲，这个函数知道它在哪里被创建的。
+
+在这里，makeCounter是在全局LE中创建的，所以[[Environment]]保持引用它。
+
+换句话说，一个函数有“印记”，记录其被创建所处的LE。[[Environment]]包含这个“印记”。
+
+2、然后代码运行，makeCounter()执行调用。这是执行makeCounter()里面第一行的时刻的图片：
+
+![Lexical Environment][lexical environment 7]
+
+在调用时，makeCounter()创建了词汇环境，以保存其变量和参数。
+
+作为LE，它存储两部分：
+
+1、记录局部变量的LE。在现在的情况下count是唯一的局部变量（当执行let count时）。
+
+2、外部LE引用，在函数的[[Environment]]里设置。这里makeCounter的[[Environment]]引用全局LE。
+
+所以现在我们有两个LE：第一个是全局的，第二个是当前makeCounter的并外部引用全局LE。
+
+3、在执行期间makeCounter()，创建一个小的嵌套函数。
+
+使用函数声明或函数表达式创建函数无关紧要。所有函数的[[Environment]]都引用它们所在的LE。所以新的小的嵌套函数也得到它。
+
+对于我们新的嵌套函数，它的[[Environment]]值是当前makeCounter()的LE：
+
+![Lexical Environment][lexical environment 8]
+
+请注意，在此步骤中，内部函数已创建，但尚未调用。内部的代码function() { return count++; }没有运行，我们将返回它。
+
+4、随着执行继续，调用makeCounter()结束，并将结果（小嵌套函数）赋值给全局变量counter：
+
+![Lexical Environment][lexical environment 9]
+
+该函数只有一行：return count++，当我们调用它将被执行。
+
+5、当counter()被调用时，为其创建一个“空”LE。它本身没有局部变量。但counter的[[Environment]]被用作它的外部引用，所以它可以访问makeCounter()的变量：
+
+![Lexical Environment][lexical environment 10]
+
+现在，如果它访问变量，它首先搜索自己的LE（空），然后搜索前一个makeCounter()调用的LE，然后是全局的。
+
+在最近的外部LE中寻找count，它会在makeCounter的LE中找到。
+
+请注意内存管理在这里工作。当makeCounter()调用结束后，一段时间内，它的LE被保留在内存中，因为有一个嵌套函数的[[Environment]]引用它。
+
+一般来说，LE对象只要存在可以使用它的函数就可以生存。
+
+6、调用counter()不仅返回值count，还可以增加它的值。请注意，修改已完成“到位”。count在被发现的环境中正确地修改了该值。
+
+![Lexical Environment][lexical environment 11]
+
+所以我们回到上一步，唯一的改变 - 新的count值。
+
+7、下一次counter()调用也是一样的。
+
+本章开头的第二块砖的答案现在应该是显而易见的。
+
+work()通过外部LE获取name：
+
+![Lexical Environment][lexical environment 12]
+
+所以结果就是"Pete"。
+
+......但是，如果在makeWorker()中没有let name，那么搜索会到外面去，并采用全局变量，那就是"John"。
+
+闭包：
+有一个通用的编程术语“闭包”，开发人员通常应该知道。
+
+一个闭包是，记住它的外部变量，可以访问它们的函数。在某些语言中，这是不可能的，或者应该以特殊的方式写成，以使其发生。但是如上所述，在JavaScript中，所有函数都是自然闭包（只有一个排除，在“new”语法中被覆盖）。
+
+也就是说：它们会用[[Environment]]属性自动记住创建的位置，并且所有这些都可以访问外部变量。
+
+在接受采访时，前端开发人员提出了一个关于“什么是闭包”的问题，一个有效的答案将是，JavaScript中所有函数都是闭包，也可提及更多技术细节关于[[Environment]]属性以及LE如何工作。
+
+## 代码块和循环，IIFE
+上面的例子集中在函数上。但LE也存在于代码块{...}中。
+
+它们是在代码块运行时创建的，并且包含块局部变量。这里有几个例子。
+
+### if
+在下面的示例中，当执行进入if块时，将为其创建新的“if-only” LE：
+
+![Lexical Environment][lexical environment 13]
+
+新的LE获得闭包的外部引用，所以phrase可以找到。但是内部声明的所有变量和函数表达式都存在于if的LE中，不能从外部访问。
+
+例如，在if完成后，alert下面将不能访问user，因此错误。
+
+### for，while
+对于一个循环，每个运行都有一个单独的LE。如果变量被声明for，那么它也是该LE的局部变量：
+
 {% highlight javascript %}
+for(let i = 0; i < 10; i++) {
+  // Each loop has its own Lexical Environment
+  // {i: value}
+}
 
+alert(i); // Error, no such variable
 {% endhighlight %}
 
+这实际上是一个例外，因为let i看起来在{...}之外。但事实上，每个循环的运行都有自己的LE包含当前i的值。
+
+循环后，i不可见。
+
+### 代码块
+我们还可以使用“裸”代码块{…}将变量隔离为“局部范围”。
+
+例如，在Web浏览器中，所有脚本共享相同的全局区域。因此，如果我们在一个脚本中创建一个全局变量，它将变得可供其他人使用。但是，如果两个脚本使用相同的变量名称并相互覆盖，则会成为冲突的根源。
+
+如果变量名是一个广泛的词，那么脚本作者就不会相互察觉。
+
+如果我们想回避，我们可以使用代码块来隔离整个脚本或其中的一个区域：
+
+{% highlight javascript %}
+{
+  // do some job with local variables that should not be seen outside
+
+  let message = "Hello";
+
+  alert(message); // Hello
+}
+
+alert(message); // Error: message is not defined
+{% endhighlight %}
+
+块之外的代码（或另一个脚本中的代码）不会看到变量，因为代码块具有自己的词汇环境。
+
+### IIFE
+在旧的脚本中，可以找到用于此目的的所谓的“立即调用的函数表达式”（缩写为IIFE）。
+
+他们看起来像这样：
+
+{% highlight javascript %}
+(function() {
+
+  let message = "Hello";
+
+  alert(message); // Hello
+
+})();
+{% endhighlight %}
+
+这里创建一个函数表达式并立即调用。所以代码现在执行，并有自己的私有变量。
+
+函数表达式用括号括起来(function {...})，因为当JavaScript在解析到"function"在时，它将其解释为函数声明的开始。但是函数声明必须有一个名称，所以会出现一个错误：
+
+{% highlight javascript %}
+// Error: Unexpected token (
+function() { // <-- JavaScript cannot find function name, meets ( and gives error
+
+  let message = "Hello";
+
+  alert(message); // Hello
+
+}();
+{% endhighlight %}
+
+我们可以说“好吧，让它成为功能声明，让我们添加一个名字”，但它不会奏效。JavaScript不允许立即调用函数声明：
+
+{% highlight javascript %}
+// syntax error because of brackets below
+function go() {
+
+}(); // <-- can't call Function Declaration immediately
+{% endhighlight %}
+
+因此，需要括号才能表明，该函数是在另一个表达式的上下文中创建的，因此它是一个Function Expression。不需要名字，可以立即调用。
+
+还有其他方式告诉JavaScript我们的函数是函数表达式：
+
+{% highlight javascript %}
+// Ways to create IIFE
+
+(function() {
+  alert("Brackets around the function");
+})();
+
+(function() {
+  alert("Brackets around the whole thing");
+}());
+
+!function() {
+  alert("Bitwise NOT operator starts the expression");
+}();
+
++function() {
+  alert("Unary plus starts the expression");
+}();
+{% endhighlight %}
+
+在上面的所有情况下，我们声明函数表达式并立即运行。
+
+### 垃圾回收
+我们一直在讨论的LE对象是与常规值相同的内存管理规则。
+
+* 通常函数运行后，LE被清理。例如：
+
+{% highlight javascript %}
+function f() {
+  let value1 = 123;
+  let value2 = 456;
+}
+
+f();
+{% endhighlight %}
+这里的两个值在技术上是LE的属性。但是，在f()完成LE变得无法访问之后，它就从内存中删除。
+
+* ...但是如果有一个嵌套函数在结束之后仍然可以访问f，那么它的[[Environment]]引用也保持外部词汇环境的存在：
+{% highlight javascript %}
+function f() {
+  let value = 123;
+
+  function g() { alert(value); }
+
+  return g;
+}
+
+let g = f(); // g is reachable, and keeps the outer lexical environment in memory
+{% endhighlight %}
+
+* 请注意，如果f()被多次调用，并且生成的函数被保存，则相应的LE对象也将保留在内存中。所有3个在下面的代码中：
+{% highlight javascript %}
+function f() {
+  let value = Math.random();
+
+  return function() { alert(value); };
+}
+
+// 3 functions in array, every of them links to Lexical Environment
+// from the corresponding f() run
+//         LE   LE   LE
+let arr = [f(), f(), f()];
+{% endhighlight %}
+
+* LE对象在无法访问时销毁。也就是说：当没有引用它的嵌套函数时。在下面的代码中，在g变得无法访问之后，value也从内存中清除;
+{% highlight javascript %}
+function f() {
+  let value = 123;
+
+  function g() { alert(value); }
+
+  return g;
+}
+
+let g = f(); // while g is alive
+// there corresponding Lexical Environment lives
+
+g = null; // ...and now the memory is cleaned up
+{% endhighlight %}
+
+### 现实优化
+正如我们所看到的，在理论上，当函数存在时，所有外部变量也被保留。
+
+但实际上，JavaScript引擎尝试优化。他们分析变量使用情况，如果很容易看到外部变量不被使用 - 它被删除。
+
+V8（Chrome，Opera）中的一个重要副作用就是调试时变量不可用。
+
+尝试使用Chrome中的开放式开发工具运行下面的示例。
+
+当它暂停时，在控制台输入alert(value)。
+{% highlight javascript %}
+function f() {
+  let value = Math.random();
+
+  function g() {
+    debugger; // in console: type alert( value ); No such variable!
+  }
+
+  return g;
+}
+
+let g = f();
+g();
+{% endhighlight %}
+你可以看到 - 没有这样的变量！理论上应该是可以访问的，但引擎优化了它。
+
+这可能导致有趣的（如果不是这么耗时的）调试问题。其中一个 - 我们可以看到一个相同命名的外部变量，而不是预期的外部变量：
+{% highlight javascript %}
+let value = "Surprise!";
+
+function f() {
+  let value = "the closest value";
+
+  function g() {
+    debugger; // in console: type alert( value ); Surprise!
+  }
+
+  return g;
+}
+
+let g = f();
+g();
+{% endhighlight %}
+
+```
+提示！
+V8的这个功能很有用。如果您正在使用Chrome / Opera进行调试，迟早会遇到它。
+
+这不是调试器的错误，而是V8的一个特殊功能。也许会有一段时间改变。您总是可以通过在此页面上运行示例来检查它。
+```
 
 Check out the [Javascript Closure].
 
@@ -281,10 +585,12 @@ Check out the [Javascript Closure].
 [lexical environment 3]: https://javascript.info/article/closure/lexical-environment-simple@2x.png
 [lexical environment 4]: https://javascript.info/article/closure/lexical-environment-simple-lookup@2x.png
 [lexical environment 5]: https://javascript.info/article/closure/lexical-search-order@2x.png
-[lexical environment 6]: 
-[lexical environment 7]: 
-[lexical environment 8]: 
-[lexical environment 9]: 
-[lexical environment 10]: 
-[lexical environment 11]: 
-[lexical environment 12]: 
+[lexical environment 6]: https://javascript.info/article/closure/lexenv-nested-makecounter-1@2x.png
+[lexical environment 7]: https://javascript.info/article/closure/lexenv-nested-makecounter-2@2x.png
+[lexical environment 8]: https://javascript.info/article/closure/lexenv-nested-makecounter-3@2x.png
+[lexical environment 9]: https://javascript.info/article/closure/lexenv-nested-makecounter-4@2x.png
+[lexical environment 10]: https://javascript.info/article/closure/lexenv-nested-makecounter-5@2x.png
+[lexical environment 11]: https://javascript.info/article/closure/lexenv-nested-makecounter-6@2x.png
+[lexical environment 12]: https://javascript.info/article/closure/lexenv-nested-work@2x.png
+[lexical environment 13]: https://javascript.info/article/closure/lexenv-if@2x.png
+
