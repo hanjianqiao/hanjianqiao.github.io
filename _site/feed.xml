@@ -1,4 +1,583 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.0.pre.beta1">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2017-09-20T16:01:41+08:00</updated><id>http://localhost:4000/</id><title type="html">Lanchitour</title><subtitle>I write something</subtitle><entry><title type="html">Leetcode: 2. Add Two Numbers</title><link href="http://localhost:4000/leetcode/algorithm/2017/09/20/leetcode_alg_2.html" rel="alternate" type="text/html" title="Leetcode: 2. Add Two Numbers" /><published>2017-09-20T13:37:15+08:00</published><updated>2017-09-20T13:37:15+08:00</updated><id>http://localhost:4000/leetcode/algorithm/2017/09/20/leetcode_alg_2</id><content type="html" xml:base="http://localhost:4000/leetcode/algorithm/2017/09/20/leetcode_alg_2.html">&lt;h1 id=&quot;problem&quot;&gt;Problem&lt;/h1&gt;
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Lct</title>
+    <description></description>
+    <link>http://localhost:4000/</link>
+    <atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml"/>
+    <pubDate>Thu, 28 Sep 2017 11:36:07 +0800</pubDate>
+    <lastBuildDate>Thu, 28 Sep 2017 11:36:07 +0800</lastBuildDate>
+    <generator>Jekyll v3.6.0</generator>
+    
+      <item>
+        <title>Javascript closure</title>
+        <description>&lt;h1 id=&quot;closure&quot;&gt;Closure&lt;/h1&gt;
+&lt;p&gt;Javascript是面向函数的语言，其本身非常灵活。函数创建以后，可以复制给变量或者作为参数传递给另一个函数，并在其他地方被调用。通常，一个函数可以访问函数外部的变量。而且这种访问很常见。但是，如果外部变量被改变，函数获得的是变量的初始值还是变量的最新值？另外，当函数被传递到另外一个地方并被调用，它是否还能访问之前的外部变量？下面我们讨论Javascript中的例子。（本文在’use strict;’条件下）&lt;/p&gt;
+
+&lt;h2 id=&quot;投石问路&quot;&gt;投石问路&lt;/h2&gt;
+&lt;p&gt;首先我们提出两个问题引出对内部机制由浅入深的分析。
+1、函数sayHi访问外部变量name，下面让我们看一下变量的值变化：&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-javascript&quot; data-lang=&quot;javascript&quot;&gt;&lt;span class=&quot;kd&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;name&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;John&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;sayHi&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;alert&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;Hi, &quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;nx&quot;&gt;name&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Pete&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;nx&quot;&gt;sayHi&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// what will it show: &quot;John&quot; or &quot;Pete&quot;?&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;问题：sayHi函数使用的是变量最新的值吗？&lt;/p&gt;
+
+&lt;p&gt;2、函数makeWoker范围一个新的函数。返回的新函数可以在其他地方被调用。那么，当该函数被调用的时候，它是在创建的上下文访问变量，还是在被调用的上下文访问变量？&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-javascript&quot; data-lang=&quot;javascript&quot;&gt;&lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;makeWorker&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;kd&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;name&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Pete&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+  &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;alert&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;kd&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;name&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;John&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;// create a function&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;work&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;makeWorker&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;// call it&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;work&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// what will it show? &quot;Pete&quot; (name where created) or &quot;John&quot; (name where called)?&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h2 id=&quot;词法上下文&quot;&gt;词法上下文&lt;/h2&gt;
+&lt;p&gt;探究函数与变量的问题，需要先明确什么是“变量”，或者说“变量的机制”是什么。
+在Javascript中，运行中的函数、代码块和脚本作为整体拥有一个对应的对象：Lexical Environment，以下简写为LE。
+Lexical Environment由两部分组成：&lt;/p&gt;
+
+&lt;p&gt;1、Environment Record：具有所有当前范围内变量作为其属性的对象（以及某些其他信息，如this的值），以下简写ER。&lt;/p&gt;
+
+&lt;p&gt;2、对外部lexical environment的引用，通常是紧接着的上级代码块（包围着当前代码的代码部分）。&lt;/p&gt;
+
+&lt;p&gt;因此，“变量”就是特别的内部对象（ER）的一个属性。“读写变量的值”即是“读写该对象的属性”。
+例如，下面的代码中包含一个LE：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://javascript.info/article/closure/lexical-environment-global@2x.png&quot; alt=&quot;Lexical Environment&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;这是便是全局LE，与整个脚本相关联。对于浏览器，所有&amp;lt;script&amp;gt;标签共享相同的LE。&lt;/p&gt;
+
+&lt;p&gt;在上图中，矩形表示ER（变量存储），箭头表示外部引用。全局LE没有外部环境，所以就是null。&lt;/p&gt;
+
+&lt;p&gt;以下是let变量工作原理的更大图景：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://javascript.info/article/closure/lexical-environment-global-2@2x.png&quot; alt=&quot;Lexical Environment&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;右侧的矩形演示了执行期间全局LE如何变化：&lt;/p&gt;
+
+&lt;p&gt;1、脚本启动时，词法环境为空。&lt;/p&gt;
+
+&lt;p&gt;2、在let phrase出现的定义。现在它最初没有值，所以undefined存储。&lt;/p&gt;
+
+&lt;p&gt;3、phrase 被分配。&lt;/p&gt;
+
+&lt;p&gt;4、phrase 指新值。&lt;/p&gt;
+
+&lt;p&gt;一切看起来都很简单，对吧？&lt;/p&gt;
+
+&lt;p&gt;总结：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;变量是与当前执行的块/函数/脚本相关联的特殊内部对象的属性。&lt;/li&gt;
+  &lt;li&gt;使用变量实际上是使用该对象的属性。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;函数声明&quot;&gt;函数声明&lt;/h2&gt;
+&lt;p&gt;函数声明是特殊的。与let声明函数不同，当创建LE时函数代码被处理，而不是在执行到代码的时候。对于全局LE，这意味着脚本启动的时刻。&lt;/p&gt;
+
+&lt;p&gt;…这就是为什么我们可以在定义之前调用函数声明。&lt;/p&gt;
+
+&lt;p&gt;下面的代码举例，LE从一开始就不是空的。它包含say，因为say是一个函数声明。后来let声明得到phrase：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://javascript.info/article/closure/lexical-environment-global-3@2x.png&quot; alt=&quot;Lexical Environment&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;内外词汇环境&quot;&gt;内外词汇环境&lt;/h2&gt;
+&lt;p&gt;在调用say()的时候使用外部变量，所以让我们看看发生了什么细节。&lt;/p&gt;
+
+&lt;p&gt;首先，当一个函数运行时，会自动创建一个新的函数LE。这是所有函数的一般规则。该LE用于存储本地变量和调用的参数。&lt;/p&gt;
+
+&lt;p&gt;当执行到say(“John”)内部的LE图片，标有三角箭头的行：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://javascript.info/article/closure/lexical-environment-simple@2x.png&quot; alt=&quot;Lexical Environment&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;在函数调用期间，我们有两个LE：内部函数（用于函数调用）和外部函数（全局函数）：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;内部LE对应于当前的执行say。它有一个变量：name函数参数。我们调用say(“John”)，所以name的值是”John”。外部LE是全局LE。&lt;/li&gt;
+  &lt;li&gt;内部LE会引用外部LE。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;当代码想要访问变量时，它首先在内部LE中搜索，然后在外部LE中搜索，然后在更外部LE中搜索，直到最外部LE。&lt;/p&gt;
+
+&lt;p&gt;如果在任何地方找不到变量，那就是严格模式（’use strict’;）下的错误。如果不是严格模式，对未定义变量的赋值创建一个新的全局变量，以便向后兼容。&lt;/p&gt;
+
+&lt;p&gt;我们来看看我们的例子中搜索如何进行：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;当say内部的alert想要访问时name，它会立即在函数LE中找到它。&lt;/li&gt;
+  &lt;li&gt;当它想要访问时phrase，那么没有phrase本地的，所以它遵循向外搜索引用并在全局LE找到它。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://javascript.info/article/closure/lexical-environment-simple-lookup@2x.png&quot; alt=&quot;Lexical Environment&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;现在我们可以从本章开始就给出第一块砖的答案。&lt;/p&gt;
+
+&lt;p&gt;一个函数得到现在的外部变量，最近的值。&lt;/p&gt;
+
+&lt;p&gt;这是因为所描述的机制。旧的变量值不保存在任何地方。当一个函数想要它们时，它需要来自它自己或者外部词汇环境的当前值。&lt;/p&gt;
+
+&lt;p&gt;所以第一个问题的答案是 Pete：&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-javascript&quot; data-lang=&quot;javascript&quot;&gt;&lt;span class=&quot;kd&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;name&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;John&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;sayHi&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;alert&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;Hi, &quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;nx&quot;&gt;name&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Pete&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// (*)&lt;/span&gt;
+
+&lt;span class=&quot;nx&quot;&gt;sayHi&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// Pete&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;以上代码的执行流程：&lt;/p&gt;
+
+&lt;p&gt;1、全局LE有属性name: “John”。
+2、在行(*)全局LE被改变了name: “Pete”。
+3、当该函数say()被执行并且name从外部获取时。这是来自全局LE “Pete”。&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;一个函数 - 一个词汇环境
+请注意，每次函数运行时都会创建一个新的功能词汇环境。
+
+而且如果一个函数被多次调用，那么每个调用都将有自己的词汇环境，其特定的局部变量和参数非常适用。
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;词汇环境是一个规范对象
+“词汇环境”是一个规范对象。我们无法在我们的代码中获取此对象，并直接操作它。JavaScript引擎还可以对其进行优化，丢弃未使用的变量来节省内存并执行其他内部技巧，但可见行为应如所述。
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;嵌套函数&quot;&gt;嵌套函数&lt;/h2&gt;
+&lt;p&gt;一个函数在另一个函数内创建时被称为“嵌套”。&lt;/p&gt;
+
+&lt;p&gt;从技术上讲，这很容易实现。&lt;/p&gt;
+
+&lt;p&gt;我们可以使用它来组织代码，如下所示：&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-javascript&quot; data-lang=&quot;javascript&quot;&gt;&lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;sayHiBye&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;firstName&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;lastName&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+
+  &lt;span class=&quot;c1&quot;&gt;// helper nested function to use below&lt;/span&gt;
+  &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;getFullName&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;firstName&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot; &quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;lastName&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+  &lt;span class=&quot;nx&quot;&gt;alert&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Hello, &quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;getFullName&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;alert&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Bye, &quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;getFullName&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;这里嵌套函数getFullName()是为了方便创建。它可以访问外部变量，因此可以返回全名。&lt;/p&gt;
+
+&lt;p&gt;更有趣的是，可以返回嵌套函数：作为新对象的属性（如果外部函数创建具有函数属性的对象）或嵌套函数自身。然后在别的地方使用。无论在哪里，它仍然保持访问相同的外部变量。&lt;/p&gt;
+
+&lt;p&gt;构造函数的一个例子（参见构造函数，运算符“new”一章）：&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-javascript&quot; data-lang=&quot;javascript&quot;&gt;&lt;span class=&quot;c1&quot;&gt;// constructor function returns a new object&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;User&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+
+  &lt;span class=&quot;c1&quot;&gt;// the object method is created as a nested function&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;sayHi&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;alert&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;kd&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;user&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;User&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;John&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;user&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;sayHi&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// the method code has access to the outer &quot;name&quot;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;返回函数的示例：&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-javascript&quot; data-lang=&quot;javascript&quot;&gt;&lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;makeCounter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;kd&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;count&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+  &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;count&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// has access to the outer counter&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;kd&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;counter&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;makeCounter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+
+&lt;span class=&quot;nx&quot;&gt;alert&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;counter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;);&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// 0&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;alert&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;counter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;);&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// 1&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;alert&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;counter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;);&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// 2&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;我们来看一下这个makeCounter例子。它创建“counter”函数，每次调用返回下一个数字。尽管是简单，该代码的稍微修改的变体具有实际用途，例如，作为伪随机数生成器等。所以这个例子不是很随意的。&lt;/p&gt;
+
+&lt;p&gt;counter内部如何工作？&lt;/p&gt;
+
+&lt;p&gt;当内部函数运行时，count++从内向外搜索变量。对于上面的示例，顺序将是：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://javascript.info/article/closure/lexical-search-order@2x.png&quot; alt=&quot;Lexical Environment&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;1、嵌套函数的内部变量。&lt;/p&gt;
+
+&lt;p&gt;2、外部函数的变量。&lt;/p&gt;
+
+&lt;p&gt;3、…更外部直到全局变量。&lt;/p&gt;
+
+&lt;p&gt;在该示例count中，在步骤中找到2。当一个外部变量被修改时，它在被找到的位置被改变。所以count++找到外部变量，并在它所属的LE中增加它。就像我们执行力let count = 1。&lt;/p&gt;
+
+&lt;p&gt;这里有两个问题：&lt;/p&gt;
+
+&lt;p&gt;1、我们可以从不属于的代码makeCounter的地方重置counter吗？例如alert调用之后的地方。
+2、如果我们makeCounter()多次调用——它返回很多counter函数。他们是独立的还是共享count？&lt;/p&gt;
+
+&lt;p&gt;尝试在阅读前回答他们。&lt;/p&gt;
+
+&lt;p&gt;…你做完了吗？&lt;/p&gt;
+
+&lt;p&gt;好的，我们一起去解答。&lt;/p&gt;
+
+&lt;p&gt;1、不可能。这counter是一个局部函数变量，我们无法从外部访问它。
+2、对于每一次调用makeCounter()会创建新的LE，拥有独立的counter。所以counter函数是独立的。
+这是演示：&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-javascript&quot; data-lang=&quot;javascript&quot;&gt;&lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;makeCounter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;kd&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;count&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;count&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;kd&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;counter1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;makeCounter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;counter2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;makeCounter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+
+&lt;span class=&quot;nx&quot;&gt;alert&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;counter1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;);&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// 0&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;alert&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;counter1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;);&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// 1&lt;/span&gt;
+
+&lt;span class=&quot;nx&quot;&gt;alert&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;counter2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;);&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// 0 (independant)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h2 id=&quot;环境详解&quot;&gt;环境详解&lt;/h2&gt;
+&lt;p&gt;现在，您了解闭包是如何工作的，我们终于可以坚持下去了。&lt;/p&gt;
+
+&lt;p&gt;以下是makeCounter示例一步一步分析，以确保了解所有内容。请注意[[Environment]]我们尚未深究。&lt;/p&gt;
+
+&lt;p&gt;1、脚本刚刚开始，只有全局LE：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://javascript.info/article/closure/lexenv-nested-makecounter-1@2x.png&quot; alt=&quot;Lexical Environment&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;在起始时刻只有makeCounter函数，因为它是一个函数声明。它还没有运行&lt;/p&gt;
+
+&lt;p&gt;所有函数“诞生时”都有一个隐藏[[Environment]]属性并且指向创建者。我们还没有深究它，但从技术上讲，这个函数知道它在哪里被创建的。&lt;/p&gt;
+
+&lt;p&gt;在这里，makeCounter是在全局LE中创建的，所以[[Environment]]保持引用它。&lt;/p&gt;
+
+&lt;p&gt;换句话说，一个函数有“印记”，记录其被创建所处的LE。[[Environment]]包含这个“印记”。&lt;/p&gt;
+
+&lt;p&gt;2、然后代码运行，makeCounter()执行调用。这是执行makeCounter()里面第一行的时刻的图片：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://javascript.info/article/closure/lexenv-nested-makecounter-2@2x.png&quot; alt=&quot;Lexical Environment&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;在调用时，makeCounter()创建了词汇环境，以保存其变量和参数。&lt;/p&gt;
+
+&lt;p&gt;作为LE，它存储两部分：&lt;/p&gt;
+
+&lt;p&gt;1、记录局部变量的LE。在现在的情况下count是唯一的局部变量（当执行let count时）。&lt;/p&gt;
+
+&lt;p&gt;2、外部LE引用，在函数的[[Environment]]里设置。这里makeCounter的[[Environment]]引用全局LE。&lt;/p&gt;
+
+&lt;p&gt;所以现在我们有两个LE：第一个是全局的，第二个是当前makeCounter的并外部引用全局LE。&lt;/p&gt;
+
+&lt;p&gt;3、在执行期间makeCounter()，创建一个小的嵌套函数。&lt;/p&gt;
+
+&lt;p&gt;使用函数声明或函数表达式创建函数无关紧要。所有函数的[[Environment]]都引用它们所在的LE。所以新的小的嵌套函数也得到它。&lt;/p&gt;
+
+&lt;p&gt;对于我们新的嵌套函数，它的[[Environment]]值是当前makeCounter()的LE：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://javascript.info/article/closure/lexenv-nested-makecounter-3@2x.png&quot; alt=&quot;Lexical Environment&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;请注意，在此步骤中，内部函数已创建，但尚未调用。内部的代码function() { return count++; }没有运行，我们将返回它。&lt;/p&gt;
+
+&lt;p&gt;4、随着执行继续，调用makeCounter()结束，并将结果（小嵌套函数）赋值给全局变量counter：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://javascript.info/article/closure/lexenv-nested-makecounter-4@2x.png&quot; alt=&quot;Lexical Environment&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;该函数只有一行：return count++，当我们调用它将被执行。&lt;/p&gt;
+
+&lt;p&gt;5、当counter()被调用时，为其创建一个“空”LE。它本身没有局部变量。但counter的[[Environment]]被用作它的外部引用，所以它可以访问makeCounter()的变量：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://javascript.info/article/closure/lexenv-nested-makecounter-5@2x.png&quot; alt=&quot;Lexical Environment&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;现在，如果它访问变量，它首先搜索自己的LE（空），然后搜索前一个makeCounter()调用的LE，然后是全局的。&lt;/p&gt;
+
+&lt;p&gt;在最近的外部LE中寻找count，它会在makeCounter的LE中找到。&lt;/p&gt;
+
+&lt;p&gt;请注意内存管理在这里工作。当makeCounter()调用结束后，一段时间内，它的LE被保留在内存中，因为有一个嵌套函数的[[Environment]]引用它。&lt;/p&gt;
+
+&lt;p&gt;一般来说，LE对象只要存在可以使用它的函数就可以生存。&lt;/p&gt;
+
+&lt;p&gt;6、调用counter()不仅返回值count，还可以增加它的值。请注意，修改已完成“到位”。count在被发现的环境中正确地修改了该值。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://javascript.info/article/closure/lexenv-nested-makecounter-6@2x.png&quot; alt=&quot;Lexical Environment&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;所以我们回到上一步，唯一的改变 - 新的count值。&lt;/p&gt;
+
+&lt;p&gt;7、下一次counter()调用也是一样的。&lt;/p&gt;
+
+&lt;p&gt;本章开头的第二块砖的答案现在应该是显而易见的。&lt;/p&gt;
+
+&lt;p&gt;work()通过外部LE获取name：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://javascript.info/article/closure/lexenv-nested-work@2x.png&quot; alt=&quot;Lexical Environment&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;所以结果就是”Pete”。&lt;/p&gt;
+
+&lt;p&gt;……但是，如果在makeWorker()中没有let name，那么搜索会到外面去，并采用全局变量，那就是”John”。&lt;/p&gt;
+
+&lt;p&gt;闭包：
+有一个通用的编程术语“闭包”，开发人员通常应该知道。&lt;/p&gt;
+
+&lt;p&gt;一个闭包是，记住它的外部变量，可以访问它们的函数。在某些语言中，这是不可能的，或者应该以特殊的方式写成，以使其发生。但是如上所述，在JavaScript中，所有函数都是自然闭包（只有一个排除，在“new”语法中被覆盖）。&lt;/p&gt;
+
+&lt;p&gt;也就是说：它们会用[[Environment]]属性自动记住创建的位置，并且所有这些都可以访问外部变量。&lt;/p&gt;
+
+&lt;p&gt;在接受采访时，前端开发人员提出了一个关于“什么是闭包”的问题，一个有效的答案将是，JavaScript中所有函数都是闭包，也可提及更多技术细节关于[[Environment]]属性以及LE如何工作。&lt;/p&gt;
+
+&lt;h2 id=&quot;代码块和循环iife&quot;&gt;代码块和循环，IIFE&lt;/h2&gt;
+&lt;p&gt;上面的例子集中在函数上。但LE也存在于代码块{…}中。&lt;/p&gt;
+
+&lt;p&gt;它们是在代码块运行时创建的，并且包含块局部变量。这里有几个例子。&lt;/p&gt;
+
+&lt;h3 id=&quot;if&quot;&gt;if&lt;/h3&gt;
+&lt;p&gt;在下面的示例中，当执行进入if块时，将为其创建新的“if-only” LE：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://javascript.info/article/closure/lexenv-if@2x.png&quot; alt=&quot;Lexical Environment&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;新的LE获得闭包的外部引用，所以phrase可以找到。但是内部声明的所有变量和函数表达式都存在于if的LE中，不能从外部访问。&lt;/p&gt;
+
+&lt;p&gt;例如，在if完成后，alert下面将不能访问user，因此错误。&lt;/p&gt;
+
+&lt;h3 id=&quot;forwhile&quot;&gt;for，while&lt;/h3&gt;
+&lt;p&gt;对于一个循环，每个运行都有一个单独的LE。如果变量被声明for，那么它也是该LE的局部变量：&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-javascript&quot; data-lang=&quot;javascript&quot;&gt;&lt;span class=&quot;k&quot;&gt;for&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kd&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;c1&quot;&gt;// Each loop has its own Lexical Environment&lt;/span&gt;
+  &lt;span class=&quot;c1&quot;&gt;// {i: value}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;nx&quot;&gt;alert&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// Error, no such variable&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;这实际上是一个例外，因为let i看起来在{…}之外。但事实上，每个循环的运行都有自己的LE包含当前i的值。&lt;/p&gt;
+
+&lt;p&gt;循环后，i不可见。&lt;/p&gt;
+
+&lt;h3 id=&quot;代码块&quot;&gt;代码块&lt;/h3&gt;
+&lt;p&gt;我们还可以使用“裸”代码块{…}将变量隔离为“局部范围”。&lt;/p&gt;
+
+&lt;p&gt;例如，在Web浏览器中，所有脚本共享相同的全局区域。因此，如果我们在一个脚本中创建一个全局变量，它将变得可供其他人使用。但是，如果两个脚本使用相同的变量名称并相互覆盖，则会成为冲突的根源。&lt;/p&gt;
+
+&lt;p&gt;如果变量名是一个广泛的词，那么脚本作者就不会相互察觉。&lt;/p&gt;
+
+&lt;p&gt;如果我们想回避，我们可以使用代码块来隔离整个脚本或其中的一个区域：&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-javascript&quot; data-lang=&quot;javascript&quot;&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;c1&quot;&gt;// do some job with local variables that should not be seen outside&lt;/span&gt;
+
+  &lt;span class=&quot;kd&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;message&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Hello&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+  &lt;span class=&quot;nx&quot;&gt;alert&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;message&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// Hello&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;nx&quot;&gt;alert&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;message&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// Error: message is not defined&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;块之外的代码（或另一个脚本中的代码）不会看到变量，因为代码块具有自己的词汇环境。&lt;/p&gt;
+
+&lt;h3 id=&quot;iife&quot;&gt;IIFE&lt;/h3&gt;
+&lt;p&gt;在旧的脚本中，可以找到用于此目的的所谓的“立即调用的函数表达式”（缩写为IIFE）。&lt;/p&gt;
+
+&lt;p&gt;他们看起来像这样：&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-javascript&quot; data-lang=&quot;javascript&quot;&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+
+  &lt;span class=&quot;kd&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;message&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Hello&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+  &lt;span class=&quot;nx&quot;&gt;alert&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;message&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// Hello&lt;/span&gt;
+
+&lt;span class=&quot;p&quot;&gt;})();&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;这里创建一个函数表达式并立即调用。所以代码现在执行，并有自己的私有变量。&lt;/p&gt;
+
+&lt;p&gt;函数表达式用括号括起来(function {…})，因为当JavaScript在解析到”function”在时，它将其解释为函数声明的开始。但是函数声明必须有一个名称，所以会出现一个错误：&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-javascript&quot; data-lang=&quot;javascript&quot;&gt;&lt;span class=&quot;c1&quot;&gt;// Error: Unexpected token (&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// &amp;lt;-- JavaScript cannot find function name, meets ( and gives error&lt;/span&gt;
+
+  &lt;span class=&quot;kd&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;message&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Hello&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+  &lt;span class=&quot;nx&quot;&gt;alert&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;message&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// Hello&lt;/span&gt;
+
+&lt;span class=&quot;p&quot;&gt;}();&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;我们可以说“好吧，让它成为功能声明，让我们添加一个名字”，但它不会奏效。JavaScript不允许立即调用函数声明：&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-javascript&quot; data-lang=&quot;javascript&quot;&gt;&lt;span class=&quot;c1&quot;&gt;// syntax error because of brackets below&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;go&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+
+&lt;span class=&quot;p&quot;&gt;}();&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// &amp;lt;-- can't call Function Declaration immediately&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;因此，需要括号才能表明，该函数是在另一个表达式的上下文中创建的，因此它是一个Function Expression。不需要名字，可以立即调用。&lt;/p&gt;
+
+&lt;p&gt;还有其他方式告诉JavaScript我们的函数是函数表达式：&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-javascript&quot; data-lang=&quot;javascript&quot;&gt;&lt;span class=&quot;c1&quot;&gt;// Ways to create IIFE&lt;/span&gt;
+
+&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;alert&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;Brackets around the function&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;})();&lt;/span&gt;
+
+&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;alert&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;Brackets around the whole thing&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}());&lt;/span&gt;
+
+&lt;span class=&quot;o&quot;&gt;!&lt;/span&gt;&lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;alert&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;Bitwise NOT operator starts the expression&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}();&lt;/span&gt;
+
+&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;alert&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;Unary plus starts the expression&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}();&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;在上面的所有情况下，我们声明函数表达式并立即运行。&lt;/p&gt;
+
+&lt;h3 id=&quot;垃圾回收&quot;&gt;垃圾回收&lt;/h3&gt;
+&lt;p&gt;我们一直在讨论的LE对象是与常规值相同的内存管理规则。&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;通常函数运行后，LE被清理。例如：&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-javascript&quot; data-lang=&quot;javascript&quot;&gt;&lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;kd&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;value1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;123&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;kd&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;value2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;456&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;nx&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;这里的两个值在技术上是LE的属性。但是，在f()完成LE变得无法访问之后，它就从内存中删除。&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;…但是如果有一个嵌套函数在结束之后仍然可以访问f，那么它的[[Environment]]引用也保持外部词汇环境的存在：&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-javascript&quot; data-lang=&quot;javascript&quot;&gt;&lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;kd&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;value&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;123&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+  &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;alert&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+  &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;kd&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;g&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// g is reachable, and keeps the outer lexical environment in memory&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;请注意，如果f()被多次调用，并且生成的函数被保存，则相应的LE对象也将保留在内存中。所有3个在下面的代码中：&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-javascript&quot; data-lang=&quot;javascript&quot;&gt;&lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;kd&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;value&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;Math&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;random&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+
+  &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;alert&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;// 3 functions in array, every of them links to Lexical Environment&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;// from the corresponding f() run&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;//         LE   LE   LE&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;arr&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(),&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(),&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()];&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;LE对象在无法访问时销毁。也就是说：当没有引用它的嵌套函数时。在下面的代码中，在g变得无法访问之后，value也从内存中清除;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-javascript&quot; data-lang=&quot;javascript&quot;&gt;&lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;kd&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;value&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;123&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+  &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;alert&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+  &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;kd&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;g&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// while g is alive&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;// there corresponding Lexical Environment lives&lt;/span&gt;
+
+&lt;span class=&quot;nx&quot;&gt;g&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;null&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// ...and now the memory is cleaned up&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h3 id=&quot;现实优化&quot;&gt;现实优化&lt;/h3&gt;
+&lt;p&gt;正如我们所看到的，在理论上，当函数存在时，所有外部变量也被保留。&lt;/p&gt;
+
+&lt;p&gt;但实际上，JavaScript引擎尝试优化。他们分析变量使用情况，如果很容易看到外部变量不被使用 - 它被删除。&lt;/p&gt;
+
+&lt;p&gt;V8（Chrome，Opera）中的一个重要副作用就是调试时变量不可用。&lt;/p&gt;
+
+&lt;p&gt;尝试使用Chrome中的开放式开发工具运行下面的示例。&lt;/p&gt;
+
+&lt;p&gt;当它暂停时，在控制台输入alert(value)。&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-javascript&quot; data-lang=&quot;javascript&quot;&gt;&lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;kd&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;value&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;Math&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;random&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+
+  &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;kr&quot;&gt;debugger&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// in console: type alert( value ); No such variable!&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+  &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;kd&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;g&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;你可以看到 - 没有这样的变量！理论上应该是可以访问的，但引擎优化了它。&lt;/p&gt;
+
+&lt;p&gt;这可能导致有趣的（如果不是这么耗时的）调试问题。其中一个 - 我们可以看到一个相同命名的外部变量，而不是预期的外部变量：&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-javascript&quot; data-lang=&quot;javascript&quot;&gt;&lt;span class=&quot;kd&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;value&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Surprise!&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;kd&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;value&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;the closest value&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+  &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;kr&quot;&gt;debugger&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// in console: type alert( value ); Surprise!&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+  &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;kd&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;g&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;提示！
+V8的这个功能很有用。如果您正在使用Chrome / Opera进行调试，迟早会遇到它。
+
+这不是调试器的错误，而是V8的一个特殊功能。也许会有一段时间改变。您总是可以通过在此页面上运行示例来检查它。
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Check out the &lt;a href=&quot;https://javascript.info/closure&quot;&gt;Javascript Closure&lt;/a&gt;.&lt;/p&gt;
+
+</description>
+        <pubDate>Fri, 22 Sep 2017 23:37:15 +0800</pubDate>
+        <link>http://localhost:4000/2017/09/22/javascritp_closure/</link>
+        <guid isPermaLink="true">http://localhost:4000/2017/09/22/javascritp_closure/</guid>
+        
+        
+        <category>javascript</category>
+        
+      </item>
+    
+      <item>
+        <title>Leetcode: 2. Add Two Numbers</title>
+        <description>&lt;h1 id=&quot;problem&quot;&gt;Problem&lt;/h1&gt;
 &lt;p&gt;You are given two non-empty linked lists representing two non-negative integers. The digits are stored in reverse order and each of their nodes contain a single digit. Add the two numbers and return it as a linked list.&lt;/p&gt;
 
 &lt;p&gt;You may assume the two numbers do not contain any leading zero, except the number 0 itself.&lt;/p&gt;
@@ -57,7 +636,23 @@ Output: 7 -&amp;gt; 0 -&amp;gt; 8
     &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
 &lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
 
-&lt;p&gt;Check out the &lt;a href=&quot;https://leetcode.com/problems/add-two-numbers/description/&quot;&gt;Add Two Numbers&lt;/a&gt;.&lt;/p&gt;</content><author><name></name></author><summary type="html">Problem You are given two non-empty linked lists representing two non-negative integers. The digits are stored in reverse order and each of their nodes contain a single digit. Add the two numbers and return it as a linked list.</summary></entry><entry><title type="html">Leetcode: 1. Two Sum</title><link href="http://localhost:4000/leetcode/algorithm/2017/09/20/leetcode_alg_1.html" rel="alternate" type="text/html" title="Leetcode: 1. Two Sum" /><published>2017-09-20T13:37:15+08:00</published><updated>2017-09-20T13:37:15+08:00</updated><id>http://localhost:4000/leetcode/algorithm/2017/09/20/leetcode_alg_1</id><content type="html" xml:base="http://localhost:4000/leetcode/algorithm/2017/09/20/leetcode_alg_1.html">&lt;h1 id=&quot;problem&quot;&gt;Problem&lt;/h1&gt;
+&lt;p&gt;Check out the &lt;a href=&quot;https://leetcode.com/problems/add-two-numbers/description/&quot;&gt;Add Two Numbers&lt;/a&gt;.&lt;/p&gt;
+
+</description>
+        <pubDate>Wed, 20 Sep 2017 13:37:15 +0800</pubDate>
+        <link>http://localhost:4000/2017/09/20/leetcode_alg_2/</link>
+        <guid isPermaLink="true">http://localhost:4000/2017/09/20/leetcode_alg_2/</guid>
+        
+        
+        <category>leetcode</category>
+        
+        <category>algorithm</category>
+        
+      </item>
+    
+      <item>
+        <title>Leetcode: 1. Two Sum</title>
+        <description>&lt;h1 id=&quot;problem&quot;&gt;Problem&lt;/h1&gt;
 &lt;p&gt;Given an array of integers, return indices of the two numbers such that they add up to a specific target.&lt;/p&gt;
 
 &lt;p&gt;You may assume that each input would have exactly one solution, and you may not use the same element twice.&lt;/p&gt;
@@ -160,4 +755,19 @@ return [0, 1].
     &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
 &lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
 
-&lt;p&gt;Check out the &lt;a href=&quot;https://leetcode.com/problems/two-sum/description/&quot;&gt;Two sum&lt;/a&gt;.&lt;/p&gt;</content><author><name></name></author><summary type="html">Problem Given an array of integers, return indices of the two numbers such that they add up to a specific target.</summary></entry></feed>
+&lt;p&gt;Check out the &lt;a href=&quot;https://leetcode.com/problems/two-sum/description/&quot;&gt;Two sum&lt;/a&gt;.&lt;/p&gt;
+
+</description>
+        <pubDate>Wed, 20 Sep 2017 13:37:15 +0800</pubDate>
+        <link>http://localhost:4000/2017/09/20/leetcode_alg_1/</link>
+        <guid isPermaLink="true">http://localhost:4000/2017/09/20/leetcode_alg_1/</guid>
+        
+        
+        <category>leetcode</category>
+        
+        <category>algorithm</category>
+        
+      </item>
+    
+  </channel>
+</rss>
