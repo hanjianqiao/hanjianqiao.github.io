@@ -1,0 +1,150 @@
+---
+layout: post
+title:  "WAP online coding"
+date:   2017-09-28 12:00:00 +0800
+categories: interview
+---
+
+* content
+{:toc}
+
+2017 WorksApplication Online Coding
+
+
+
+
+# WAP
+## Problem 1
+```
+时间限制：C/C++ 1秒，其他语言 2秒
+ 空间限制：C/C++ 65536K，其他语言 131072K
+ 题目描述
+ Today is Peter's birthday, his good friend Jerry is ready to buy some gifts for him. Jerry goes to the nearest gift store with M dollars. The store has N kinds of gifts, and buying the i-th kind gift needs W_i dollars.
+ The gift shop is holding a promotion now, and Jerry will get get A_i * x + B_i (x > 0) candies if purchasing x i-th kind gift at the same time .
+ Help Jerry to get as many candies as he can under this promotion.
+ 输入描述:
+ The input include N + 1 lines, and the first line consists of two positive integers M and N (1 ≤ M ≤ 1000, 1 ≤ N ≤ 1000), which indicate Jerry's money and the number of kinds of gifts, separated by spaces.
+ The next N lines, each line has three positive integers W_i, A_i, B_i (1 ≤ W_i ≤ 1000, 0 ≤ A_i, B_i ≤ 1000), indicate the price of the i-th kind gift and the parameters of the number of candies provided by the store, separated by spaces.
+ 30% small input: 1 ≤ M, N, W_i ≤ 10, 0 ≤ A_i, B_i ≤ 10
+ 30% medium input: 1 ≤ M, N, W_i ≤ 100, 0 ≤ A_i, B_i ≤ 100
+ 40% large input: 1 ≤ M, N, W_i ≤ 1000, 0 ≤ A_i, B_i ≤ 1000
+ 输出描述:
+ Output an integer that indicates the maximum candies that Jerry can obtain.
+```
+
+## Answer 1
+
+{% highlight c++ %}
+#include <bits/stdc++.h>
+
+using namespace std;
+const int maxn = 1000 + 5;
+
+int cart[maxn], weigh[maxn*2], val[maxn*2];
+int M, N;
+
+int updateShoppingCart(){
+    
+    // cart size(money) from 0 to M(money Jerry has), set to zero for the start
+    for(int i = 0; i <= M;++i){
+        cart[i] = 0;
+    }
+    
+    // 0/1 knapsack
+    for(int i = 0 ; i < N ; ++i){
+        for(int size = M ; size >= weigh[i]; --size){
+            cart[size] = max(cart[size-weigh[i]] + val[i] , cart[size]);
+        }
+    }
+    
+    // complete knapsack
+    for(int i = N; i < N+N; ++i){
+        for(int size = weigh[i]; size <= M; ++size){
+            cart[size] = max(cart[size-weigh[i]] + val[i], cart[size]);
+        }
+    }
+    return cart[M] ;
+}
+
+int main() {
+    
+    // for scanf
+    int a, b;
+    
+    // get Money and N kinds of gifts
+    scanf("%d%d", &M, &N);
+    
+    // see gifts as: N kinds of gift with value A_i+B_i only can be bought once,
+    // and another N kinds of gift with value B_i has no limits
+    // val[i] >= val[N+i]. weigh [i] == weigh[N+i], Jerry surely will buy a gift with value A_i*1+B_i
+    for(int i = 0; i < N; i++){
+        scanf("%d%d%d", &weigh[i], &a, &b);
+        weigh[N+i] = weigh[i];
+        val[i] = a + b;
+        val[N+i] = a;
+    }
+    
+    int ret = updateShoppingCart();
+    cout << ret << endl;
+    
+    return 0;
+}
+{% endhighlight %}
+
+
+## Problem 2
+```
+ [编程|50分] Lucky Subsequence
+ 时间限制：C/C++ 1秒，其他语言 2秒
+ 空间限制：C/C++ 65536K，其他语言 131072K
+ 题目描述
+ Suppose you have an integer sequence,  we define a lucky number as a special integer which is the XOR value of the sequence's greatest and strict second greatest elements. For example, in [1,2,3,3], 3 is the greatest element and 2 is the strict second greatest one, even though we have two 3 at the same time; so the lucky number is 2 xor 3 = 1.
+ 
+ Now given an N-length integer sequence, please find out the maximum lucky number of all continuous subsequences.
+ 
+ 输入描述:
+ The first line is an integer n, representing the length of this sequence.
+ The second line contains n integers, which represents the value of V[i] (1 ≤ V[i] ≤ 10^8) in the sequence respectively. We’ll ensure that there are at least twodifferentvalues from V[1] to V[n] Define the continuous subsequence as [V[l],V[l+1],V[l+2],...,V[r]] (1 ≤ l ≤ r ≤ n)
+ 30% small input: 2 ≤ n ≤ 10
+ 40% medium input: 2 ≤ n ≤ 5000
+ 30% large input: 2 ≤ n ≤ 100000
+ 输出描述:
+ Output the greatest lucky number
+```
+
+## Answer 2
+
+{% highlight c++ %}
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int main() {
+    int n,x,ans=0;
+    scanf("%d", &n);
+    int *array = new int[n];
+    for(int i = 0; i < n; i++){
+        scanf("%d", array+i);
+        //write your code
+    }
+    for(int i = 0; i < n; i++){
+        int max = 0, smax = 0;
+        for(int j = i; j < n; j++){
+            if(array[j] > smax){
+                if(array[j] > max){
+                    max = array[j];
+                }else{
+                    smax = array[j];
+                }
+                if(max && smax){
+                    if(ans < (max ^ smax)){
+                        ans = (max ^ smax);
+                    }
+                }
+            }
+        }
+    }
+    printf("%d\n",ans);
+    return 0;
+}
+{% endhighlight %}
