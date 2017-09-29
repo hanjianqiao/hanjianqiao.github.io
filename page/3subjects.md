@@ -33,11 +33,11 @@ icon: circle
 {% include comments.html %}
 
 
-[Mathematics]: https://hanjianqiao.github.io/math-blog
-[Algorithm]: https://hanjianqiao.github.io/alg-blog
-[Programming Language]: https://hanjianqiao.github.io/pl-blog
-[Design Parttens]: https://hanjianqiao.github.io/dp-blog
-[Unix Programming]: https://hanjianqiao.github.io/up-blog
-[Linux Kernel]: https://hanjianqiao.github.io/lk-blog
-[Linux Distribution]: https://hanjianqiao.github.io/ld-blog
-[Database]: https://hanjianqiao.github.io/db-blog
+[Mathematics]: https://hanjianqiao.github.io/math-blog/
+[Algorithm]: https://hanjianqiao.github.io/alg-blog/
+[Programming Language]: https://hanjianqiao.github.io/pl-blog/
+[Design Parttens]: https://hanjianqiao.github.io/dp-blog/
+[Unix Programming]: https://hanjianqiao.github.io/up-blog/
+[Linux Kernel]: https://hanjianqiao.github.io/lk-blog/
+[Linux Distribution]: https://hanjianqiao.github.io/ld-blog/
+[Database]: https://hanjianqiao.github.io/db-blog/
