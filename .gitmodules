@@ -1,6 +1,0 @@
-[submodule "_posts/up-blog"]
-	path = _posts/up-blog
-	url = git@github.com:hanjianqiao/up-blog.git
-[submodule "_posts/ld-blog"]
-	path = _posts/ld-blog
-	url = git@github.com:hanjianqiao/ld-blog.git
