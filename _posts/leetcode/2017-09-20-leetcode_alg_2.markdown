@@ -5,9 +5,6 @@ date:   2017-09-20 13:37:15 +0800
 categories: leetcode algorithm
 ---
 
-* content
-{:toc}
-
 Leetcode: Added number represented by linked list
 
 

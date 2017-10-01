@@ -5,9 +5,6 @@ date:   2017-09-22 23:37:15 +0800
 categories: javascript
 ---
 
-* content
-{:toc}
-
 学习一下Javascript语言的闭包
 
 

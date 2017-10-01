@@ -5,10 +5,6 @@ date:   2017-09-25 14:30:00 +0800
 categories: interview
 ---
 
-
-* content
-{:toc}
-
 讲讲我校招面试鹅厂的经历
 
 
