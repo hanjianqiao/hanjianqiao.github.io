@@ -2,7 +2,7 @@
 layout: post
 title:  "Leetcode: 1. Two Sum"
 date:   2017-09-20 13:37:15 +0800
-categories: leetcode algorithm
+categories: leetcode
 ---
 
 Leetcode： Find two value with Sum

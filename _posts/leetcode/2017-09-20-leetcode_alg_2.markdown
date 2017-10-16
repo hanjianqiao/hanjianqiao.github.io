@@ -2,7 +2,7 @@
 layout: post
 title:  "Leetcode: 2. Add Two Numbers"
 date:   2017-09-20 13:37:15 +0800
-categories: leetcode algorithm
+categories: leetcode
 ---
 
 Leetcode: Added number represented by linked list
