@@ -17,4 +17,284 @@ cgroups (abbreviated from control groups) is a Linux kernel feature that limits,
 Engineers at Google (primarily Paul Menage and Rohit Seth) started the work on this feature in 2006 under the name "process containers". In late 2007, the nomenclature changed to "control groups" to avoid confusion caused by multiple meanings of the term "container" in the Linux kernel context, and the control groups functionality was merged into the Linux kernel mainline in kernel version 2.6.24, which was released in January 2008. Since then, developers have added many new features and controllers, such as support for kernfs, firewalling, and unified hierarchy.
 
 
+## what in cgroup
+run command on linux:
 
+```
+$ ls /sys/fs/cgroup/ -al
+total 0
+drwxr-xr-x 13 root root 340 Oct 19 18:05 .
+drwxr-xr-x  9 root root   0 Oct 20  2017 ..
+dr-xr-xr-x  5 root root   0 Oct 19 18:05 blkio
+lrwxrwxrwx  1 root root  11 Oct 19 18:05 cpu -> cpu,cpuacct
+lrwxrwxrwx  1 root root  11 Oct 19 18:05 cpuacct -> cpu,cpuacct
+dr-xr-xr-x  7 root root   0 Oct 19 18:45 cpu,cpuacct
+dr-xr-xr-x  2 root root   0 Oct 19 18:05 cpuset
+dr-xr-xr-x  5 root root   0 Oct 19 18:05 devices
+dr-xr-xr-x  2 root root   0 Oct 19 18:05 freezer
+dr-xr-xr-x  2 root root   0 Oct 19 18:05 hugetlb
+dr-xr-xr-x  5 root root   0 Oct 19 18:05 memory
+lrwxrwxrwx  1 root root  16 Oct 19 18:05 net_cls -> net_cls,net_prio
+dr-xr-xr-x  2 root root   0 Oct 19 18:05 net_cls,net_prio
+lrwxrwxrwx  1 root root  16 Oct 19 18:05 net_prio -> net_cls,net_prio
+dr-xr-xr-x  2 root root   0 Oct 19 18:05 perf_event
+dr-xr-xr-x  5 root root   0 Oct 19 18:05 pids
+dr-xr-xr-x  5 root root   0 Oct 19 18:05 systemd
+```
+
+### blkio
+```
+$ ls /sys/fs/cgroup/blkio/ -al
+total 0
+dr-xr-xr-x  5 root root   0 Oct 19 21:10 .
+drwxr-xr-x 13 root root 340 Oct 19 18:05 ..
+-r--r--r--  1 root root   0 Oct 19 21:13 blkio.io_merged
+-r--r--r--  1 root root   0 Oct 19 21:13 blkio.io_merged_recursive
+-r--r--r--  1 root root   0 Oct 19 21:13 blkio.io_queued
+-r--r--r--  1 root root   0 Oct 19 21:13 blkio.io_queued_recursive
+-r--r--r--  1 root root   0 Oct 19 21:13 blkio.io_service_bytes
+-r--r--r--  1 root root   0 Oct 19 21:13 blkio.io_service_bytes_recursive
+-r--r--r--  1 root root   0 Oct 19 21:13 blkio.io_serviced
+-r--r--r--  1 root root   0 Oct 19 21:13 blkio.io_serviced_recursive
+-r--r--r--  1 root root   0 Oct 19 21:13 blkio.io_service_time
+-r--r--r--  1 root root   0 Oct 19 21:13 blkio.io_service_time_recursive
+-r--r--r--  1 root root   0 Oct 19 21:13 blkio.io_wait_time
+-r--r--r--  1 root root   0 Oct 19 21:13 blkio.io_wait_time_recursive
+-rw-r--r--  1 root root   0 Oct 19 21:13 blkio.leaf_weight
+-rw-r--r--  1 root root   0 Oct 19 21:13 blkio.leaf_weight_device
+--w-------  1 root root   0 Oct 19 21:13 blkio.reset_stats
+-r--r--r--  1 root root   0 Oct 19 21:13 blkio.sectors
+-r--r--r--  1 root root   0 Oct 19 21:13 blkio.sectors_recursive
+-r--r--r--  1 root root   0 Oct 19 21:13 blkio.throttle.io_service_bytes
+-r--r--r--  1 root root   0 Oct 19 21:13 blkio.throttle.io_serviced
+-rw-r--r--  1 root root   0 Oct 19 18:05 blkio.throttle.read_bps_device
+-rw-r--r--  1 root root   0 Oct 19 18:05 blkio.throttle.read_iops_device
+-rw-r--r--  1 root root   0 Oct 19 18:05 blkio.throttle.write_bps_device
+-rw-r--r--  1 root root   0 Oct 19 18:05 blkio.throttle.write_iops_device
+-r--r--r--  1 root root   0 Oct 19 21:13 blkio.time
+-r--r--r--  1 root root   0 Oct 19 21:13 blkio.time_recursive
+-rw-r--r--  1 root root   0 Oct 19 18:05 blkio.weight
+-rw-r--r--  1 root root   0 Oct 19 18:05 blkio.weight_device
+-rw-r--r--  1 root root   0 Oct 19 21:13 cgroup.clone_children
+-rw-r--r--  1 root root   0 Oct 19 18:30 cgroup.procs
+-r--r--r--  1 root root   0 Oct 19 21:13 cgroup.sane_behavior
+drwxr-xr-x  2 root root   0 Oct 19 18:05 init.scope
+-rw-r--r--  1 root root   0 Oct 19 21:13 notify_on_release
+-rw-r--r--  1 root root   0 Oct 19 21:13 release_agent
+drwxr-xr-x 64 root root   0 Oct 19 18:05 system.slice
+-rw-r--r--  1 root root   0 Oct 19 21:13 tasks
+drwxr-xr-x  2 root root   0 Oct 19 18:05 user.slice
+```
+
+### cpu,cpuacct
+```
+$ ls /sys/fs/cgroup/cpu,cpuacct/ -al
+total 0
+dr-xr-xr-x  7 root root   0 Oct 19 18:45 .
+drwxr-xr-x 13 root root 340 Oct 19 18:05 ..
+-rw-r--r--  1 root root   0 Oct 19 18:50 cgroup.clone_children
+-rw-r--r--  1 root root   0 Oct 19 18:50 cgroup.procs
+-r--r--r--  1 root root   0 Oct 19 18:50 cgroup.sane_behavior
+-r--r--r--  1 root root   0 Oct 19 18:50 cpuacct.stat
+-rw-r--r--  1 root root   0 Oct 19 18:50 cpuacct.usage
+-r--r--r--  1 root root   0 Oct 19 18:50 cpuacct.usage_percpu
+-rw-r--r--  1 root root   0 Oct 19 18:50 cpu.cfs_period_us
+-rw-r--r--  1 root root   0 Oct 19 18:50 cpu.cfs_quota_us
+-rw-r--r--  1 root root   0 Oct 19 18:50 cpu.shares
+-r--r--r--  1 root root   0 Oct 19 18:50 cpu.stat
+drwxr-xr-x  2 root root   0 Oct 19 18:50 init.scope
+-rw-r--r--  1 root root   0 Oct 19 18:50 notify_on_release
+-rw-r--r--  1 root root   0 Oct 19 18:50 release_agent
+drwxr-xr-x 64 root root   0 Oct 19 18:50 system.slice
+-rw-r--r--  1 root root   0 Oct 19 18:50 tasks
+drwxr-xr-x  2 root root   0 Oct 19 18:50 user.slice
+```
+
+### cpuset
+```
+$ ls /sys/fs/cgroup/cpuset/ -al
+total 0
+dr-xr-xr-x  2 root root   0 Oct 19 21:10 .
+drwxr-xr-x 13 root root 340 Oct 19 18:05 ..
+-rw-r--r--  1 root root   0 Oct 19 21:14 cgroup.clone_children
+-rw-r--r--  1 root root   0 Oct 19 21:14 cgroup.procs
+-r--r--r--  1 root root   0 Oct 19 21:14 cgroup.sane_behavior
+-rw-r--r--  1 root root   0 Oct 19 21:14 cpuset.cpu_exclusive
+-rw-r--r--  1 root root   0 Oct 19 18:05 cpuset.cpus
+-r--r--r--  1 root root   0 Oct 19 21:14 cpuset.effective_cpus
+-r--r--r--  1 root root   0 Oct 19 21:14 cpuset.effective_mems
+-rw-r--r--  1 root root   0 Oct 19 21:14 cpuset.mem_exclusive
+-rw-r--r--  1 root root   0 Oct 19 21:14 cpuset.mem_hardwall
+-rw-r--r--  1 root root   0 Oct 19 21:14 cpuset.memory_migrate
+-r--r--r--  1 root root   0 Oct 19 21:14 cpuset.memory_pressure
+-rw-r--r--  1 root root   0 Oct 19 21:14 cpuset.memory_pressure_enabled
+-rw-r--r--  1 root root   0 Oct 19 21:14 cpuset.memory_spread_page
+-rw-r--r--  1 root root   0 Oct 19 21:14 cpuset.memory_spread_slab
+-rw-r--r--  1 root root   0 Oct 19 18:05 cpuset.mems
+-rw-r--r--  1 root root   0 Oct 19 21:14 cpuset.sched_load_balance
+-rw-r--r--  1 root root   0 Oct 19 21:14 cpuset.sched_relax_domain_level
+-rw-r--r--  1 root root   0 Oct 19 21:14 notify_on_release
+-rw-r--r--  1 root root   0 Oct 19 21:14 release_agent
+-rw-r--r--  1 root root   0 Oct 19 21:14 tasks
+```
+
+### devices
+```
+$ ls /sys/fs/cgroup/devices/ -al
+total 0
+dr-xr-xr-x  5 root root   0 Oct 19 21:10 .
+drwxr-xr-x 13 root root 340 Oct 19 18:05 ..
+-rw-r--r--  1 root root   0 Oct 19 21:15 cgroup.clone_children
+-rw-r--r--  1 root root   0 Oct 19 18:30 cgroup.procs
+-r--r--r--  1 root root   0 Oct 19 21:15 cgroup.sane_behavior
+--w-------  1 root root   0 Oct 19 21:15 devices.allow
+--w-------  1 root root   0 Oct 19 21:15 devices.deny
+-r--r--r--  1 root root   0 Oct 19 21:15 devices.list
+drwxr-xr-x  2 root root   0 Oct 19 18:05 init.scope
+-rw-r--r--  1 root root   0 Oct 19 21:15 notify_on_release
+-rw-r--r--  1 root root   0 Oct 19 21:15 release_agent
+drwxr-xr-x 64 root root   0 Oct 19 18:05 system.slice
+-rw-r--r--  1 root root   0 Oct 19 21:15 tasks
+drwxr-xr-x  2 root root   0 Oct 19 18:05 user.slice
+```
+
+### freezer
+```
+$ ls /sys/fs/cgroup/freezer/ -al
+total 0
+dr-xr-xr-x  2 root root   0 Oct 19 21:10 .
+drwxr-xr-x 13 root root 340 Oct 19 18:05 ..
+-rw-r--r--  1 root root   0 Oct 19 21:16 cgroup.clone_children
+-rw-r--r--  1 root root   0 Oct 19 21:16 cgroup.procs
+-r--r--r--  1 root root   0 Oct 19 21:16 cgroup.sane_behavior
+-rw-r--r--  1 root root   0 Oct 19 21:16 notify_on_release
+-rw-r--r--  1 root root   0 Oct 19 21:16 release_agent
+-rw-r--r--  1 root root   0 Oct 19 21:16 tasks
+```
+
+### hugetlb
+```
+$ ls /sys/fs/cgroup/hugetlb/ -al
+total 0
+dr-xr-xr-x  2 root root   0 Oct 19 21:10 .
+drwxr-xr-x 13 root root 340 Oct 19 18:05 ..
+-rw-r--r--  1 root root   0 Oct 19 21:16 cgroup.clone_children
+-rw-r--r--  1 root root   0 Oct 19 21:16 cgroup.procs
+-r--r--r--  1 root root   0 Oct 19 21:16 cgroup.sane_behavior
+-rw-r--r--  1 root root   0 Oct 19 21:16 hugetlb.1GB.failcnt
+-rw-r--r--  1 root root   0 Oct 19 21:16 hugetlb.1GB.limit_in_bytes
+-rw-r--r--  1 root root   0 Oct 19 21:16 hugetlb.1GB.max_usage_in_bytes
+-r--r--r--  1 root root   0 Oct 19 21:16 hugetlb.1GB.usage_in_bytes
+-rw-r--r--  1 root root   0 Oct 19 21:16 hugetlb.2MB.failcnt
+-rw-r--r--  1 root root   0 Oct 19 21:16 hugetlb.2MB.limit_in_bytes
+-rw-r--r--  1 root root   0 Oct 19 21:16 hugetlb.2MB.max_usage_in_bytes
+-r--r--r--  1 root root   0 Oct 19 21:16 hugetlb.2MB.usage_in_bytes
+-rw-r--r--  1 root root   0 Oct 19 21:16 notify_on_release
+-rw-r--r--  1 root root   0 Oct 19 21:16 release_agent
+-rw-r--r--  1 root root   0 Oct 19 21:16 tasks
+```
+
+### memeory
+```
+$ ls /sys/fs/cgroup/memory/ -al
+total 0
+dr-xr-xr-x  5 root root   0 Oct 19 21:10 .
+drwxr-xr-x 13 root root 340 Oct 19 18:05 ..
+-rw-r--r--  1 root root   0 Oct 19 21:17 cgroup.clone_children
+--w--w--w-  1 root root   0 Oct 19 21:17 cgroup.event_control
+-rw-r--r--  1 root root   0 Oct 19 18:30 cgroup.procs
+-r--r--r--  1 root root   0 Oct 19 21:17 cgroup.sane_behavior
+drwxr-xr-x  2 root root   0 Oct 19 18:05 init.scope
+-rw-r--r--  1 root root   0 Oct 19 21:17 memory.failcnt
+--w-------  1 root root   0 Oct 19 21:17 memory.force_empty
+-rw-r--r--  1 root root   0 Oct 19 21:17 memory.kmem.failcnt
+-rw-r--r--  1 root root   0 Oct 19 18:05 memory.kmem.limit_in_bytes
+-rw-r--r--  1 root root   0 Oct 19 21:17 memory.kmem.max_usage_in_bytes
+-r--r--r--  1 root root   0 Oct 19 21:17 memory.kmem.slabinfo
+-rw-r--r--  1 root root   0 Oct 19 21:17 memory.kmem.tcp.failcnt
+-rw-r--r--  1 root root   0 Oct 19 21:17 memory.kmem.tcp.limit_in_bytes
+-rw-r--r--  1 root root   0 Oct 19 21:17 memory.kmem.tcp.max_usage_in_bytes
+-r--r--r--  1 root root   0 Oct 19 21:17 memory.kmem.tcp.usage_in_bytes
+-r--r--r--  1 root root   0 Oct 19 21:17 memory.kmem.usage_in_bytes
+-rw-r--r--  1 root root   0 Oct 19 21:17 memory.limit_in_bytes
+-rw-r--r--  1 root root   0 Oct 19 21:17 memory.max_usage_in_bytes
+-rw-r--r--  1 root root   0 Oct 19 21:17 memory.move_charge_at_immigrate
+-r--r--r--  1 root root   0 Oct 19 21:17 memory.numa_stat
+-rw-r--r--  1 root root   0 Oct 19 18:05 memory.oom_control
+----------  1 root root   0 Oct 19 21:17 memory.pressure_level
+-rw-r--r--  1 root root   0 Oct 19 18:05 memory.soft_limit_in_bytes
+-r--r--r--  1 root root   0 Oct 19 21:17 memory.stat
+-rw-r--r--  1 root root   0 Oct 19 18:05 memory.swappiness
+-r--r--r--  1 root root   0 Oct 19 21:17 memory.usage_in_bytes
+-rw-r--r--  1 root root   0 Oct 19 18:05 memory.use_hierarchy
+-rw-r--r--  1 root root   0 Oct 19 21:17 notify_on_release
+-rw-r--r--  1 root root   0 Oct 19 21:17 release_agent
+drwxr-xr-x 64 root root   0 Oct 19 18:05 system.slice
+-rw-r--r--  1 root root   0 Oct 19 21:17 tasks
+drwxr-xr-x  2 root root   0 Oct 19 18:05 user.slice
+```
+
+### net_cls,net_prio
+```
+$ ls /sys/fs/cgroup/net_cls,net_prio/ -al
+total 0
+dr-xr-xr-x  2 root root   0 Oct 19 21:10 .
+drwxr-xr-x 13 root root 340 Oct 19 18:05 ..
+-rw-r--r--  1 root root   0 Oct 19 21:18 cgroup.clone_children
+-rw-r--r--  1 root root   0 Oct 19 21:18 cgroup.procs
+-r--r--r--  1 root root   0 Oct 19 21:18 cgroup.sane_behavior
+-rw-r--r--  1 root root   0 Oct 19 21:18 net_cls.classid
+-rw-r--r--  1 root root   0 Oct 19 21:18 net_prio.ifpriomap
+-r--r--r--  1 root root   0 Oct 19 21:18 net_prio.prioidx
+-rw-r--r--  1 root root   0 Oct 19 21:18 notify_on_release
+-rw-r--r--  1 root root   0 Oct 19 21:18 release_agent
+-rw-r--r--  1 root root   0 Oct 19 21:18 tasks
+```
+
+### perf_event
+```
+$ ls /sys/fs/cgroup/perf_event/ -al
+total 0
+dr-xr-xr-x  2 root root   0 Oct 19 21:10 .
+drwxr-xr-x 13 root root 340 Oct 19 18:05 ..
+-rw-r--r--  1 root root   0 Oct 19 21:19 cgroup.clone_children
+-rw-r--r--  1 root root   0 Oct 19 21:19 cgroup.procs
+-r--r--r--  1 root root   0 Oct 19 21:19 cgroup.sane_behavior
+-rw-r--r--  1 root root   0 Oct 19 21:19 notify_on_release
+-rw-r--r--  1 root root   0 Oct 19 21:19 release_agent
+-rw-r--r--  1 root root   0 Oct 19 21:19 tasks
+```
+
+### pids
+```
+$ ls /sys/fs/cgroup/pids/ -al
+total 0
+dr-xr-xr-x  5 root root   0 Oct 19 21:10 .
+drwxr-xr-x 13 root root 340 Oct 19 18:05 ..
+-rw-r--r--  1 root root   0 Oct 19 21:19 cgroup.clone_children
+-rw-r--r--  1 root root   0 Oct 19 18:30 cgroup.procs
+-r--r--r--  1 root root   0 Oct 19 21:19 cgroup.sane_behavior
+drwxr-xr-x  2 root root   0 Oct 19 18:05 init.scope
+-rw-r--r--  1 root root   0 Oct 19 21:19 notify_on_release
+-rw-r--r--  1 root root   0 Oct 19 21:19 release_agent
+drwxr-xr-x 64 root root   0 Oct 19 18:05 system.slice
+-rw-r--r--  1 root root   0 Oct 19 21:19 tasks
+drwxr-xr-x  3 root root   0 Oct 19 18:05 user.slice
+```
+
+### systemd
+```
+$ ls /sys/fs/cgroup/systemd/ -al
+total 0
+dr-xr-xr-x  5 root root   0 Oct 19 21:10 .
+drwxr-xr-x 13 root root 340 Oct 19 18:05 ..
+-rw-r--r--  1 root root   0 Oct 19 21:20 cgroup.clone_children
+-rw-r--r--  1 root root   0 Oct 19 18:05 cgroup.procs
+-r--r--r--  1 root root   0 Oct 19 21:20 cgroup.sane_behavior
+drwxr-xr-x  2 root root   0 Oct 19 18:05 init.scope
+-rw-r--r--  1 root root   0 Oct 19 18:05 notify_on_release
+-rw-r--r--  1 root root   0 Oct 19 18:05 release_agent
+drwxr-xr-x 64 root root   0 Oct 19 18:05 system.slice
+-rw-r--r--  1 root root   0 Oct 19 21:20 tasks
+drwxr-xr-x  3 root root   0 Oct 19 18:05 user.slice
+```
