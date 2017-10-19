@@ -4,8 +4,7 @@ title:  "Data structure: heap"
 date:   2017-10-18 11:17:01 +0800
 categories: algorithm
 ---
-
-# Heap
+***Heap***
 
 
 
