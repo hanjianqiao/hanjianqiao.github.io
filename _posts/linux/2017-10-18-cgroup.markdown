@@ -17,8 +17,24 @@ cgroups (abbreviated from control groups) is a Linux kernel feature that limits,
 Engineers at Google (primarily Paul Menage and Rohit Seth) started the work on this feature in 2006 under the name "process containers". In late 2007, the nomenclature changed to "control groups" to avoid confusion caused by multiple meanings of the term "container" in the Linux kernel context, and the control groups functionality was merged into the Linux kernel mainline in kernel version 2.6.24, which was released in January 2008. Since then, developers have added many new features and controllers, such as support for kernfs, firewalling, and unified hierarchy.
 
 
-## what in cgroup
-run command on linux:
+Cgroups are organized hierarchically, like processes, and child cgroups inherit some of the attributes of their parents. However, there are differences between the two models.
+
+***The Linux Process Model***
+
+All processes on a Linux system are child processes of a common parent: the init process, which is executed by the kernel at boot time and starts other processes (which may in turn start child processes of their own). Because all processes descend from a single parent, the Linux process model is a single hierarchy, or tree.
+
+Additionally, every Linux process except init inherits the environment (such as the PATH variable) and certain other attributes (such as open file descriptors) of its parent process.
+
+***The Cgroup Model***
+
+Cgroups are similar to processes in that: they are hierarchical, and child cgroups inherit certain attributes from their parent cgroup.
+
+The fundamental difference is that many different hierarchies of cgroups can exist simultaneously on a system. If the Linux process model is a single tree of processes, then the cgroup model is one or more separate, unconnected trees of tasks (i.e. processes).
+
+Multiple separate hierarchies of cgroups are necessary because each hierarchy is attached to one or more subsystems. A subsystem represents a single resource, such as CPU time or memory.
+
+## Subsystems in cgroup
+run command on linux to list available subsystems:
 
 ```
 $ ls /sys/fs/cgroup/ -al
@@ -43,7 +59,7 @@ dr-xr-xr-x  5 root root   0 Oct 19 18:05 systemd
 ```
 
 
-### blkio
+### [blkio]({{ site.baseurl }}{% link _posts/linux/2017-10-21-cgroup_blkio.markdown %})
 ```
 $ ls /sys/fs/cgroup/blkio/ -al
 total 0
@@ -86,18 +102,11 @@ drwxr-xr-x 64 root root   0 Oct 19 18:05 system.slice
 -rw-r--r--  1 root root   0 Oct 19 21:13 tasks
 drwxr-xr-x  2 root root   0 Oct 19 18:05 user.slice
 ```
-cgroup subsys "blkio" implements the block io controller. There seems to be
-a need of various kinds of IO control policies (like proportional BW, max BW)
-both at leaf nodes as well as at intermediate nodes in a storage hierarchy.
-Plan is to use the same cgroup based management interface for blkio controller
-and based on user options switch IO policies in the background.
+cgroup subsys "blkio" implements the block io controller. There seems to be a need of various kinds of IO control policies (like proportional BW, max BW) both at leaf nodes as well as at intermediate nodes in a storage hierarchy.
 
-Currently two IO control policies are implemented. First one is proportional
-weight time based division of disk policy. It is implemented in CFQ. Hence
-this policy takes effect only on leaf nodes when CFQ is being used. The second
-one is throttling policy which can be used to specify upper IO rate limits
-on devices. This policy is implemented in generic block layer and can be
-used on leaf nodes as well as higher level logical devices like device mapper.
+Plan is to use the same cgroup based management interface for blkio controller and based on user options switch IO policies in the background.
+
+Currently two IO control policies are implemented. First one is proportional weight time based division of disk policy. It is implemented in CFQ. Hence this policy takes effect only on leaf nodes when CFQ is being used. The second one is throttling policy which can be used to specify upper IO rate limits on devices. This policy is implemented in generic block layer and can be used on leaf nodes as well as higher level logical devices like device mapper.
 
 
 ### cpu,cpuacct
