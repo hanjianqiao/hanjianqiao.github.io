@@ -77,9 +77,13 @@ drwxr-xr-x  2 root root   0 Oct 19 18:05 user.slice
 - Create two same size files (say 512MB each) on same disk (file1, file2) and
   launch two dd threads in different cgroup to read those files.
 	- Create file, choose your own path
+
+		```
 		dd if=/dev/zero of=/home/lct/tmp/zerofile1 bs=1M count=512
 		dd if=/dev/zero of=/home/lct/tmp/zerofile2 bs=1M count=512
-	
+		```
+		
+	```
 	sync
 	echo 3 > /proc/sys/vm/drop_caches
 
@@ -90,6 +94,7 @@ drwxr-xr-x  2 root root   0 Oct 19 18:05 user.slice
 	dd if=/home/lct/tmp/zerofile2 of=/dev/null &
 	echo $! > /sys/fs/cgroup/blkio/test2/tasks
 	cat /sys/fs/cgroup/blkio/test2/tasks
+	```
 
 - At macro level, first dd should finish first. To get more precise data, keep
   on looking at (with the help of script), at blkio.disk_time and
