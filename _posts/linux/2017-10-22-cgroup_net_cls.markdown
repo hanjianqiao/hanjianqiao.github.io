@@ -28,12 +28,13 @@ This net_cls.classid value is initialized to 0.
 Enbale tc on eth1, and set some limit
 
 ```
-tc -s qdisc ls dev eth1
-tc qdisc add dev eth1 root handle 3:0 htb default 3
-tc class add dev eth1 parent 3:0 classid 3:0 htb rate 700kbps ceil 800kbps prio 0
-tc class add dev eth1 parent 3:0 classid 3:1 htb rate 100kbps ceil 200kbps prio 0
-tc class add dev eth1 parent 3:0 classid 3:2 htb rate 200kbps ceil 300kbps prio 0
-tc class add dev eth1 parent 3:0 classid 3:3 htb rate 300kbps ceil 400kbps prio 0
+export DEV=eth1
+tc -s qdisc ls dev $DEV
+tc qdisc add dev $DEV root handle 3:0 htb default 3
+tc class add dev $DEV parent 3:0 classid 3:0 htb rate 700kbps ceil 800kbps prio 0
+tc class add dev $DEV parent 3:0 classid 3:1 htb rate 100kbps ceil 200kbps prio 0
+tc class add dev $DEV parent 3:0 classid 3:2 htb rate 200kbps ceil 300kbps prio 0
+tc class add dev $DEV parent 3:0 classid 3:3 htb rate 300kbps ceil 400kbps prio 0
 ```
 
 Make it works with cgroup
