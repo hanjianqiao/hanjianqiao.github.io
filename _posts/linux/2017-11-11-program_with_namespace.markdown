@@ -29,7 +29,10 @@ UTS         CLONE_NEWUTS      Hostname and NIS domain name
 
 # Program examples
 
+***We make it by call clone()***
+
 ## 1. Cgroup namespaces (CLONE_NEWCGROUP)
+
 
 ## 2. IPC namespaces (CLONE_NEWIPC)
 
