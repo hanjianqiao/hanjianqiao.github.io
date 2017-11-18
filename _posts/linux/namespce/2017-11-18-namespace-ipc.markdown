@@ -1,11 +1,11 @@
 ---
 layout: post
-title:  "Cgroup IPC"
+title:  "IPC namespace"
 date:   2017-11-18 16:10:01 +0800
 categories: linux
 ---
 
-Cgroup IPC
+IPC namespace
 
 
 
