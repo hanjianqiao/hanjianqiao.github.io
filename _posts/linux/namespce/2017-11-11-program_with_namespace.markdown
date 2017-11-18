@@ -33,7 +33,6 @@ UTS         CLONE_NEWUTS      Hostname and NIS domain name
 
 ## 1. Cgroup namespaces (CLONE_NEWCGROUP)
 
-
 ## 2. IPC namespaces (CLONE_NEWIPC)
 
 ## 3. Network namespaces (CLONE_NEWNET)
@@ -41,9 +40,7 @@ UTS         CLONE_NEWUTS      Hostname and NIS domain name
 ## 4. Mount namespaces (CLONE_NEWNS)
 
 ## 5. PID namespaces (CLONE_NEWPID)
- 
+
 ## 6. User namespaces (CLONE_NEWUSER)
 
 ## 7. UTS namespaces (CLONE_NEWUTS)
- 
-

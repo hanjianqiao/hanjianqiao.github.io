@@ -59,7 +59,7 @@ dr-xr-xr-x  5 root root   0 Oct 19 18:05 systemd
 ```
 
 
-### [blkio]({{ site.baseurl }}{% link _posts/linux/2017-10-21-cgroup_blkio.markdown %})
+### blkio
 ```
 $ ls /sys/fs/cgroup/blkio/ -al
 total 0
