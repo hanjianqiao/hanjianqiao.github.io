@@ -11,10 +11,10 @@ IPC namespace
 
 ## Overview
 
-If CLONE_NEWIPC is set, then create the process in a new IPCnamespace.  If this flag is not set, then (as with fork(2)),the process is created in the same IPC namespace as thecalling process.  This flag is intended for the implementation
+If CLONE_NEWIPC is set, then create the process in a new IPC namespace.  If this flag is not set, then (as with fork(2)),the process is created in the same IPC namespace as the calling process.  This flag is intended for the implementation
 of containers.
 
-An IPC namespace provides an isolated view of System V IPCobjects (see svipc(7)) and (since Linux 2.6.30) POSIX messagequeues (see mq_overview(7)).  The common characteristic ofthese IPC mechanisms is that IPC objects are identified bymechanisms other than filesystem pathnames.
+An IPC namespace provides an isolated view of System V IPC objects (see svipc(7)) and (since Linux 2.6.30) POSIX message queues (see mq_overview(7)).  The common characteristic of these IPC mechanisms is that IPC objects are identified by mechanisms other than filesystem pathnames.
 
 Objects created in an IPC namespace are visible to all otherprocesses that are members of that namespace, but are notvisible to processes in other IPC namespaces.
 
