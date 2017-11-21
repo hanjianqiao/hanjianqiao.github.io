@@ -31,16 +31,16 @@ UTS         CLONE_NEWUTS      Hostname and NIS domain name
 
 ***We make it by call clone()***
 
-## 1. Cgroup namespaces (CLONE_NEWCGROUP)
+## 1. Cgroup namespaces (CLONE_NEWCGROUP) (since Linux 2.6.19)
 
-## 2. IPC namespaces (CLONE_NEWIPC)
+## 2. IPC namespaces (CLONE_NEWIPC) (since Linux 2.6.19)
 
-## 3. Network namespaces (CLONE_NEWNET)
+## 3. Network namespaces (CLONE_NEWNET) (since Linux 2.6.24)
 
-## 4. Mount namespaces (CLONE_NEWNS)
+## 4. Mount namespaces (CLONE_NEWNS) (since Linux 2.4.19)
 
-## 5. PID namespaces (CLONE_NEWPID)
+## 5. PID namespaces (CLONE_NEWPID) (since Linux 2.6.24)
 
-## 6. User namespaces (CLONE_NEWUSER)
+## 6. User namespaces (CLONE_NEWUSER) （Start in Linux 2.6.23, Complete in Linux 3.8）
 
-## 7. UTS namespaces (CLONE_NEWUTS)
+## 7. UTS namespaces (CLONE_NEWUTS) (since Linux 2.6.19)
