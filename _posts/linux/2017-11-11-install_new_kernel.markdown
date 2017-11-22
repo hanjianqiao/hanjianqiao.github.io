@@ -12,10 +12,14 @@ categories: linux
 
 ## 1、环境准备
 
+下载Linux内核源代码：
+
 ```
 wget http://mirrors.aliyun.com/linux-kernel/v4.x/linux-4.13.tar.xz
 wget http://mirrors.aliyun.com/linux-kernel/v4.x/patch-4.13.xz
 ```
+
+安装必要软件包：
 
 ```
 sudo apt-get install kernel-package build-essential libncurses5-dev fakeroot libssl-dev bc
