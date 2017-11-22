@@ -25,7 +25,7 @@ wget http://mirrors.aliyun.com/linux-kernel/v4.x/patch-4.13.xz
 sudo apt-get install kernel-package build-essential libncurses5-dev fakeroot libssl-dev bc
 ```
 
-## 2、下载源码和补丁
+## 2、解压源码和补丁，给内核打补丁
 
 ```
 xz -d linux-4.13.tar.xz
