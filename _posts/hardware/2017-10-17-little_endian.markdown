@@ -57,7 +57,7 @@ int main(){
 输出为：
 
 ```
-int	at: 0x5715e8a8 is 0x0a0b0c0d
+int		at: 0x5715e8a8 is 0x0a0b0c0d
 short	at: 0x5715e8a8 is 0x0c0d
 short	at: 0x5715e8aa is 0x0a0b
 char	at: 0x5715e8a8 is 0x0d
