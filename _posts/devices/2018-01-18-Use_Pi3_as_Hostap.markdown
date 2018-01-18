@@ -1,9 +1,8 @@
 ---
 layout: post
-title:  "Welcome to Jekyll!"
+title:  "Use Pi 3 as Wifi Hotspot"
 date:   2018-01-18 13:16:01 +0800
-categories: jekyll
-tags: template
+categories: Device
 ---
 
 Use Pi 3 as Wifi Hotspot
