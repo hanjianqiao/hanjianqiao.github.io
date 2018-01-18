@@ -9,7 +9,6 @@ Use Pi 3 as Wifi Hotspot
 
 
 
-
 ## Environment
 Hardware: Pi 3
 System: https://www.raspberrypi.org/downloads/raspbian/ downloads `RASPBIAN STRETCH LITE` with date after 2017-11-29
