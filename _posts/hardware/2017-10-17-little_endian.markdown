@@ -29,7 +29,7 @@ i的地址存放了四个字节，值分别为0x0a、0x0b、0x0c、0x0d。
 
 下面是实例代码说明：
 
-```
+```c++
 #include <iostream>
 #include <stdio.h>
 using namespace std;
