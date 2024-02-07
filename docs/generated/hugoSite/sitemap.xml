@@ -2,11 +2,6 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://blog.hanjianqiao.cn/generated/hugoSite/</loc>
-    <lastmod>2023-02-20T03:52:30-05:00</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url><url>
     <loc>https://blog.hanjianqiao.cn/generated/hugoSite/project-types/open-source/</loc>
     <lastmod>2023-02-20T03:52:30-05:00</lastmod>
     <changefreq>monthly</changefreq>
@@ -18,6 +13,11 @@
     <priority>0.5</priority>
   </url><url>
     <loc>https://blog.hanjianqiao.cn/generated/hugoSite/project-types/</loc>
+    <lastmod>2023-02-20T03:52:30-05:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url><url>
+    <loc>https://blog.hanjianqiao.cn/generated/hugoSite/</loc>
     <lastmod>2023-02-20T03:52:30-05:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
@@ -162,11 +162,11 @@
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url><url>
-    <loc>https://blog.hanjianqiao.cn/generated/hugoSite/about/</loc>
+    <loc>https://blog.hanjianqiao.cn/generated/hugoSite/contact/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url><url>
-    <loc>https://blog.hanjianqiao.cn/generated/hugoSite/contact/</loc>
+    <loc>https://blog.hanjianqiao.cn/generated/hugoSite/about/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>

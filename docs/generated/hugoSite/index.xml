@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Example Site</title>
+    <title>简程空间</title>
     <link>https://blog.hanjianqiao.cn/generated/hugoSite/</link>
-    <description>Recent content in Jump-start your personal blog and portfolio with the Hugo Liftoff theme. on Example Site</description>
+    <description>Recent content in 我的编程知识分享 on 简程空间</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
+    <language>zh-cn</language>
     <lastBuildDate>Mon, 20 Feb 2023 03:52:30 -0500</lastBuildDate><atom:link href="https://blog.hanjianqiao.cn/generated/hugoSite/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Markdown Syntax Guide 2</title>

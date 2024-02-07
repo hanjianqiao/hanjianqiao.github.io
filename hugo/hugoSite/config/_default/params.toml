@@ -1,5 +1,5 @@
 ### SEO, Analytics & 3rd-party
-netlify_forms = true # add data-netlify attribute to contact and newsletter forms, false to disable Netlify forms
+netlify_forms = false # add data-netlify attribute to contact and newsletter forms, false to disable Netlify forms
 # gtm_id = '' # GTM tracking (leave blank to use GA)
 disallow_search_engines = false # Disallow search engine crawling in robots.txt
 
@@ -17,7 +17,7 @@ label_drafts = true # Add a label indicator next to the title of any built draft
 newsletter_header = "This is my custom newsletter header with a captivating title."
 newsletter_description = "This is my custom newsletter description that tells you why you should sign up."
 newsletter_submit = "Join now"
-global_newsletter = true # Enable newsletter site-wide
+global_newsletter = false # Enable newsletter site-wide
 
 # CSS / JavaScript
 enable_postcss = false # Enable if you're using npm and want to utilize PostCSS processing
@@ -42,15 +42,15 @@ schemaImageHeight = 455 # Height of the above image
 
 ### Social
 # Show social links in footer, home hero section, or about page
-footer_socials = true
-home_hero_socials = true
-about_page_socials = true
+footer_socials = false
+home_hero_socials = false
+about_page_socials = false
 
 # Enable or disable individual social icons
 [social.links]
-  twitter = "username"
-  github = "username"
-  stack_overflow = "userid/username" # include user id
+  # twitter = "username"
+  # github = "username"
+  # stack_overflow = "userid/username" # include user id
   email = "user@example.com"
   # linkedin = "username" # Comment out to disable
   # mastodon_server = "example.social" # include subdomains if relevant, scheme not needed (defaults to https)

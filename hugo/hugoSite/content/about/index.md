@@ -1,8 +1,8 @@
 ---
 type: about
-linktitle: About
+linktitle: 关于
 title: Hi, my name is Hugo.
-seo_title: About
+seo_title: 关于
 description: Learn more about my background and experience.
 ---
 

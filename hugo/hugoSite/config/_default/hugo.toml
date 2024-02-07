@@ -1,8 +1,8 @@
 ### General
 baseURL = 'https://blog.hanjianqiao.cn/generated/hugoSite/' # Enter your full production URL
-languageCode = 'en-us' # Default
-timeZone = 'America/New_York' # IANA timezone https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
-title = 'Example Site' # Site title used throughout site
+languageCode = 'zh-cn' # Default
+timeZone = 'Asia/Shanghai' # IANA timezone https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+title = '简程空间' # Site title used throughout site
 
 ### SEO, Analytics & 3rd-party
 enableRobotsTXT = true # To overwrite the theme's robots.txt, add your own in the /layouts/ directory
@@ -16,7 +16,7 @@ buildDrafts = false # Default
 buildExpired = false # Default 
 buildFuture = false # Default
 canonifyURLs = false # Default
-defaultContentLanguage = 'en' # Default
+defaultContentLanguage = 'cn' # Default
 disableAliases = true # Set to true if using server (Netlify, .htaccess) for redirects instead of Hugo
 disableKinds = [] # Default
 enableEmoji = true # Use Emojis in content
