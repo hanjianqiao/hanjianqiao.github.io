@@ -7,6 +7,7 @@ export default defineConfig({
 	integrations: [
 		starlight({
 			title: '智晦（建设中...）',
+			routeMiddleware: './src/middleware/routeMiddleware.ts',
 			social: {
 				email: 'mailto:hanjianqiao@gmail.com',
 			},
