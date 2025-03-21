@@ -9,7 +9,7 @@ export default defineConfig({
 			title: '智晦（建设中...）',
 			routeMiddleware: './src/middleware/routeMiddleware.ts',
 			social: {
-				email: 'mailto:hanjianqiao@gmail.com',
+				// email: 'mailto:hanjianqiao@gmail.com',
 			},
 			sidebar: [
 				{
