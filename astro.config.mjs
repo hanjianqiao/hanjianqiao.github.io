@@ -6,22 +6,19 @@ import starlight from '@astrojs/starlight';
 export default defineConfig({
 	integrations: [
 		starlight({
-			title: '智晦（建设中...）',
+			title: '智晦',
+			defaultLocale: 'zh-CN',
 			routeMiddleware: './src/middleware/routeMiddleware.ts',
 			social: {
 				// email: 'mailto:hanjianqiao@gmail.com',
 			},
+			components: {
+				// Footer: './src/components/Footer.astro',
+			},
 			sidebar: [
 				{
-					label: 'Guides',
-					items: [
-						// Each item here is one entry in the navigation menu.
-						{ label: 'Example Guide', slug: 'guides/example' },
-					],
-				},
-				{
-					label: 'Reference',
-					autogenerate: { directory: 'reference' },
+					label: '捐赠支持',
+					autogenerate: { directory: 'sponsor' },
 				},
 			],
 		}),
