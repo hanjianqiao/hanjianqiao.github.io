@@ -10,10 +10,10 @@ export default defineConfig({
 			defaultLocale: 'zh-CN',
 			routeMiddleware: './src/middleware/routeMiddleware.ts',
 			social: {
-				// email: 'mailto:hanjianqiao@gmail.com',
+				email: 'mailto:hanjianqiao@gmail.com',
 			},
 			components: {
-				// Footer: './src/components/Footer.astro',
+				PageFrame: './src/components/PageFrame.astro',
 			},
 			sidebar: [
 				{
