@@ -1,0 +1,546 @@
+---
+title: RSA密钥存储格式
+description: Get started building your docs site with Starlight.
+template: doc
+---
+
+## [PEM](https://en.wikipedia.org/wiki/Privacy-Enhanced_Mail)
+
+PEM格式可以简单理解为如下的格式
+
+```PEM
+-----BEGINE {Command Label}-----
+{BASE64编码的数据}
+-----END {Command Label}-----
+```
+
+由于PEM并不限定所包含的数据可是，所以PEM约等于“任意包括一行BEGIN开头、一行END结尾的BASE64编码数据”
+
+## [ASN.1](https://en.wikipedia.org/wiki/ASN.1)和[DER](https://en.wikipedia.org/wiki/X.690#DER_encoding)
+
+### Listing of Universal Tags
+
+| Universal Tag Number  | Description                   |
+| --------------------- | ----------------------------- |
+| 0                     | reserved for BER              |
+| 1                     | BOOLEAN                       |
+| 2                     | INTEGER                       |
+| 3                     | BIT STRING                    |
+| 4                     | OCTET STRING                  |
+| 5                     | NULL                          |
+| 6                     | OBJECT IDENTIFIER             |
+| 7                     | ObjectDescriptor              |
+| 8                     | INSTANCE OF, EXTERNAL         |
+| 9                     | REAL                          |
+| 10                    | ENUMERATED                    |
+| 11                    | EMBEDDED PDV                  |
+| 12                    | UTF8String                    |
+| 13                    | RELATIVE-OID                  |
+| 16                    | SEQUENCE, SEQUENCE OF         |
+| 17                    | SET, SET OF                   |
+| 18                    | NumericString                 |
+| 19                    | PrintableString               |
+| 20                    | TeletexString, T61String      |
+| 21                    | VideotexString                |
+| 22                    | IA5String                     |
+| 23                    | UTCTime                       |
+| 24                    | GeneralizedTime               |
+| 25                    | GraphicString                 |
+| 26                    | VisibleString, ISO646String   |
+| 27                    | GeneralString                 |
+| 28                    | UniversalString               |
+| 29                    | CHARACTER STRING              |
+| 30                    | BMPString                     |
+
+### DER Encoded Tag Bytes
+
+DER是一种编码规则，这个规则是RSA密钥使用的规则。而ASN.1是一个标准，这个标准中的一种编码规则是DER。
+
+The Tag field in a TLV triplet identifies the type of the data structure being sent between computers. For example, the tag for an integer is 0x02, and the tag for an object identifier is 0x06. Although multiple bytes are permitted, none of the data types used by the Certificate Enrollment API require more than one. The following illustration shows the breakdown of a Tag value. Bits 7 and 6 identify the ASN.1 tagging class. There are four available classes, but the Certificate Enrollment API uses data types that belong only to the UNIVERSAL class. Bit 5 identifies whether the encoding form is primitive or constructed. Basic and string types are encoded by using primitive forms, constructed types by using a constructed form. For more information, see [ASN.1 Type System](https://learn.microsoft.com/en-us/windows/win32/seccertenroll/about-asn-1-type-system). Bits 4 through 0 contain the tag number.
+
+![the breakdown of a Tag value](https://learn.microsoft.com/en-us/windows/win32/seccertenroll/images/der-tlv-tagbyte.png)
+
+| Type                | ASN.1 class     | Encoding form   | Tag value      |
+| ------------------- | --------------- | --------------- | -------------- |
+| BIT STRING          | UNIVERSAL       | Primitive       | 00000011(0x03) |
+| BOOLEAN             | UNIVERSAL       | Primitive       | 00000001(0x01) |
+| INTEGER             | UNIVERSAL       | Primitive       | 00000010(0x02) |
+| NULL                | UNIVERSAL       | Primitive       | 00000101(0x05) |
+| OBJECT IDENTIFIER   | UNIVERSAL       | Primitive       | 00000110(0x06) |
+| OCTET STRING        | UNIVERSAL       | Primitive       | 00000100(0x04) |
+| BMPString           | UNIVERSAL       | Primitive       | 00011110(0x1E) |
+| IA5String           | UNIVERSAL       | Primitive       | 00010110(0x16) |
+| PrintableString     | UNIVERSAL       | Primitive       | 00010011(0x13) |
+| TeletexString       | UNIVERSAL       | Primitive       | 00010100(0x14) |
+| UTF8String          | UNIVERSAL       | Primitive       | 00001100(0x0C) |
+| SEQUENCE            | UNIVERSAL       | Constructed     | 00110000(0x30) |
+| SEQUENCE OF         | UNIVERSAL       | Constructed     | 00110000(0x30) |
+| SET                 | UNIVERSAL       | Constructed     | 00110001(0x31) |
+| SET OF              | UNIVERSAL       | Constructed     | 00110001(0x31) |
+
+The Length field in a TLV triplet identifies the number of bytes encoded in the Value field. The Value field contains the content being sent between computers. If the Value field contains fewer than 128 bytes, the Length field requires only one byte. Bit 7 of the Length field is zero (0) and the remaining bits identify the number of bytes of content being sent. If the Value field contains more than 127 bytes, bit 7 of the Length field is one (1) and the remaining bits identify the number of bytes needed to contain the length. Examples are shown in the following illustration.
+
+![Encoded Length and Value Bytes](https://learn.microsoft.com/en-us/windows/win32/seccertenroll/images/der-tlv-lengthbyte.png)
+
+更详细的信息参考[Introduction to ASN.1 Syntax and Encoding](https://learn.microsoft.com/en-us/windows/win32/seccertenroll/about-introduction-to-asn-1-syntax-and-encoding)
+
+## RSA公钥（[PKCS#1](https://datatracker.ietf.org/doc/html/rfc3447)）
+
+The RSA Public key PEM file is specific for RSA keys. It starts and ends with the tags:
+
+```PEM
+-----BEGIN RSA PUBLIC KEY-----
+BASE64 ENCODED DATA
+-----END RSA PUBLIC KEY-----
+```
+
+Within the base64 encoded data, the following DER structure is present:
+
+```ASN.1
+RSAPublicKey ::= SEQUENCE {
+    modulus         INTEGER,  -- n
+    publicExponent  INTEGER   -- e
+}
+```
+
+例如有下面的公钥：
+
+```PEM
+-----BEGIN RSA PUBLIC KEY-----
+MIGJAoGBANrSIpUCEmDuP/UaxlRhVQM+BXGxukQRvOWd44326pA64GEEVkoCNrJJ
+mfMSiD0d56QqJ82pLFRTmXTnxx3gw08/1o7ZIoIgepVncM6YRb03+9Vp4/3ZT6QX
+G62lNunFpey525z0OdQTaHtA5IurTDHh+pu5E+7sY+Mp03MA3WhHAgMBAAE=
+-----END RSA PUBLIC KEY-----
+```
+
+将内部BASE64编码数据转换成HEX后：
+
+```HEX
+30818902818100da d22295021260ee3f
+f51ac6546155033e 0571b1ba4411bce5
+9de38df6ea903ae0 6104564a0236b249
+99f312883d1de7a4 2a27cda92c545399
+74e7c71de0c34f3f d68ed92282207a95
+6770ce9845bd37fb d569e3fdd94fa417
+1bada536e9c5a5ec b9db9cf439d41368
+7b40e48bab4c31e1 fa9bb913eeec63e3
+29d37300dd684702 03010001
+```
+
+尝试解析：
+
+```raw
+30 81 89 -- SEQUENCE length: 89
+    02 81 81    -- INTEGER length: 81
+        00  -- Unused bits: 00
+        dad22295021260ee3ff51ac6546155033e0571b1ba4411bce59de38df6ea903ae06104564a0236b24999f312883d1de7a42a27cda92c54539974e7c71de0c34f3fd68ed92282207a956770ce9845bd37fbd569e3fdd94fa4171bada536e9c5a5ecb9db9cf439d413687b40e48bab4c31e1fa9bb913eeec63e329d37300dd6847
+    02 03   -- INTEGER length: 03
+        010001
+```
+
+## RSA私钥（[PKCS#1](https://datatracker.ietf.org/doc/html/rfc3447)）
+
+The RSA private key PEM file is specific for RSA keys. It starts and ends with the tags:
+
+```PEM
+-----BEGIN RSA PRIVATE KEY-----
+BASE64 ENCODED DATA
+-----END RSA PRIVATE KEY-----
+```
+
+Within the base64 encoded data, the following DER structure is present:
+
+```PEM
+RSAPrivateKey ::= SEQUENCE {
+    version   Version,
+    modulus   INTEGER,  -- n
+    publicExponent  INTEGER,  -- e
+    privateExponent   INTEGER,  -- d
+    prime1  INTEGER,  -- p
+    prime2  INTEGER,  -- q
+    exponent1 INTEGER,  -- d mod (p-1)
+    exponent2 INTEGER,  -- d mod (q-1)
+    coefficient   INTEGER,  -- (inverse of q) mod p
+    otherPrimeInfos   OtherPrimeInfos OPTIONAL
+}
+```
+
+例如有以下私钥：
+
+```PEM
+-----BEGIN RSA PRIVATE KEY-----
+MIICXgIBAAKBgQDa0iKVAhJg7j/1GsZUYVUDPgVxsbpEEbzlneON9uqQOuBhBFZK
+AjaySZnzEog9HeekKifNqSxUU5l058cd4MNPP9aO2SKCIHqVZ3DOmEW9N/vVaeP9
+2U+kFxutpTbpxaXsuduc9DnUE2h7QOSLq0wx4fqbuRPu7GPjKdNzAN1oRwIDAQAB
+AoGAfdsq5MViSLn/szwJInMw8EJ14ySz237QRMkBHqAL3ZTfhS13a+3GA9ltYG8i
+SPSwTK2qYxGQW5gRxTmiPr8N1bC8mFWD6/nW3tvTTv/yf1IwyNnEqJMzIfcXkjb2
+0zKLPlIFTs0/R5IJV5VRGmP2p2D2tQaHwmhiSL4gtS5jBWECQQDvWQhKdxuZUsCg
+coz5PEwK9U9S2dgMuwiof8eJv+RhjhIlDm2VdfmV7iq4baLerQVfnPYGKcZ8VVhS
+lCD6vacfAkEA6guAigyvlExZ7WerPA991KPIC6yH5aEw1KXqDmsKKbXOL1aqzy2N
+I6WUR+nBk+fHoWORzgxeCRetFLbllThh2QJBANYBf15FnVG8IivUAKSg+0UZDfIA
+giLv4M/4YIuUHjnz89laSzVGJQGf0GbS8Lu1bIaPK5NbKvPkw3IirFJF3PUCQQDE
+fYWb4Myjt3okO03ibasZk6tGScIKAksJrIWVNz5gCDejPKLIrxh4XfHgchrHvua1
+0u89StrDzXHNG0QiBCT5AkEAnOYq34Bq/0X0DvYGsP+try49JbNvCUAxTVR+CSjE
+0MD+p0Nd9OjPXOfdUSNZGzB93sQWCC8N2pcYTwDpylRQhw==
+-----END RSA PRIVATE KEY-----
+```
+
+BASE64转HEX得到：
+
+```HEX
+3082025e02010002 818100dad2229502
+1260ee3ff51ac654 6155033e0571b1ba
+4411bce59de38df6 ea903ae06104564a
+0236b24999f31288 3d1de7a42a27cda9
+2c54539974e7c71d e0c34f3fd68ed922
+82207a956770ce98 45bd37fbd569e3fd
+d94fa4171bada536 e9c5a5ecb9db9cf4
+39d413687b40e48b ab4c31e1fa9bb913
+eeec63e329d37300 dd68470203010001
+0281807ddb2ae4c5 6248b9ffb33c0922
+7330f04275e324b3 db7ed044c9011ea0
+0bdd94df852d776b edc603d96d606f22
+48f4b04cadaa6311 905b9811c539a23e
+bf0dd5b0bc985583 ebf9d6dedbd34eff
+f27f5230c8d9c4a8 933321f7179236f6
+d3328b3e52054ecd 3f4792095795511a
+63f6a760f6b50687 c2686248be20b52e
+630561024100ef59 084a771b9952c0a0
+728cf93c4c0af54f 52d9d80cbb08a87f
+c789bfe4618e1225 0e6d9575f995ee2a
+b86da2dead055f9c f60629c67c555852
+9420fabda71f0241 00ea0b808a0caf94
+4c59ed67ab3c0f7d d4a3c80bac87e5a1
+30d4a5ea0e6b0a29 b5ce2f56aacf2d8d
+23a59447e9c193e7 c7a16391ce0c5e09
+17ad14b6e5953861 d9024100d6017f5e
+459d51bc222bd400 a4a0fb45190df200
+8222efe0cff8608b 941e39f3f3d95a4b
+354625019fd066d2 f0bbb56c868f2b93
+5b2af3e4c37222ac 5245dcf5024100c4
+7d859be0cca3b77a 243b4de26dab1993
+ab4649c20a024b09 ac8595373e600837
+a33ca2c8af18785d f1e0721ac7bee6b5
+d2ef3d4adac3cd71 cd1b44220424f902
+41009ce62adf806a ff45f40ef606b0ff
+adaf2e3d25b36f09 40314d547e0928c4
+d0c0fea7435df4e8 cf5ce7dd5123591b
+307ddec416082f0d da97184f00e9ca54
+5087
+```
+
+一步步解析将得到：
+
+```ASN.1
+30 82 02 5e -- SEQUENCE length: 025e
+    02  01  -- INTEGER length: 01
+        00
+    02 81 81    -- INTEGER length: 81
+        00  -- Leading
+        dad22295021260ee3ff51ac6546155033e0571b1ba4411bce59de38df6ea903ae06104564a0236b24999f312883d1de7a42a27cda92c54539974e7c71de0c34f3fd68ed92282207a956770ce9845bd37fbd569e3fdd94fa4171bada536e9c5a5ecb9db9cf439d413687b40e48bab4c31e1fa9bb913eeec63e329d37300dd6847
+    02 03   -- INTEGER length: 03
+        010001
+    02 81 80    -- INTEGER length: 80
+        7ddb2ae4c56248b9ffb33c09227330f04275e324b3db7ed044c9011ea00bdd94df852d776bedc603d96d606f2248f4b04cadaa6311905b9811c539a23ebf0dd5b0bc985583ebf9d6dedbd34efff27f5230c8d9c4a8933321f7179236f6d3328b3e52054ecd3f4792095795511a63f6a760f6b50687c2686248be20b52e630561
+    02 41   -- INTEGER length: 41
+        00  -- Leading
+        ef59084a771b9952c0a0728cf93c4c0af54f52d9d80cbb08a87fc789bfe4618e12250e6d9575f995ee2ab86da2dead055f9cf60629c67c5558529420fabda71f
+    02 41   -- INTEGER length: 41
+        00  -- Leading
+        ea0b808a0caf944c59ed67ab3c0f7dd4a3c80bac87e5a130d4a5ea0e6b0a29b5ce2f56aacf2d8d23a59447e9c193e7c7a16391ce0c5e0917ad14b6e5953861d9
+    02 41   -- INTEGER length: 41
+        00  -- Leading
+        d6017f5e459d51bc222bd400a4a0fb45190df2008222efe0cff8608b941e39f3f3d95a4b354625019fd066d2f0bbb56c868f2b935b2af3e4c37222ac5245dcf5
+    02 41   -- INTEGER length: 41
+        00  -- Leading
+        c47d859be0cca3b77a243b4de26dab1993ab4649c20a024b09ac8595373e600837a33ca2c8af18785df1e0721ac7bee6b5d2ef3d4adac3cd71cd1b44220424f9
+    02 41   -- INTEGER length: 41
+        00  -- Leading
+        9ce62adf806aff45f40ef606b0ffadaf2e3d25b36f0940314d547e0928c4d0c0fea7435df4e8cf5ce7dd5123591b307ddec416082f0dda97184f00e9ca545087
+```
+
+## RSA公钥（[PKCS#8](https://en.wikipedia.org/wiki/PKCS_8)）
+
+Because RSA is not used exclusively inside X509, SSL and TLS, a more generic key format, PKCS#8, is available. It identifies the type of public key and contains the relevant data. It starts and ends with the tags:
+
+```PEM
+-----BEGIN PUBLIC KEY-----
+BASE64 ENCODED DATA
+-----END PUBLIC KEY-----
+```
+
+Within the base64 encoded data, the following DER structure is present:
+
+```ASN.1
+PublicKeyInfo ::= SEQUENCE {
+    algorithm   AlgorithmIdentifier,
+    PublicKey   BIT STRING
+}
+
+AlgorithmIdentifier ::= SEQUENCE {
+    algorithm   OBJECT IDENTIFIER,
+    parameters  ANY DEFINED BY algorithm OPTIONAL
+}
+```
+
+So, for an RSA public key, the OID is 1.2.840.113549.1.1.1, and the RSAPublicKey is the PublicKey key data bitstring.
+
+例如下面的公钥：
+
+```PEM
+-----BEGIN PUBLIC KEY-----
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAsT2Eo8r5lYQUKc3Lg30K
+e/MXIdPi0suek4uOERY6U1kh7sMMP4FDrR0xf2vtLNfu8x+WlHYroTLRSPtSBPV5
+aUWLDMzA6UL0BeX4YbAxGaOTPk5bJM0RN59rX4AwKJozbu9qrFkqn6IPy4tF9V6O
+l+mLWLvNh2hqgwscb2m9IU7JJUzm1n1Jt+7b3j+omJCsTbRsNMsSP87brJlxHNbZ
+hmeW29INAGjber0ZeJtBzz5IhUA4U8SYHsNZIxYTB+RaBXdzdlib0d6m6BRBEQvW
+4hy/kSDrUMCz9MzG+gjtz4oHSnXN5qdi6Oz+41kEzGYI54vsTtTsTpFphhAiAnih
+wwIDAQAB
+-----END PUBLIC KEY-----
+```
+
+将BASE64数据转换为HEX：
+
+```HEX
+30820122300d0609 2a864886f70d0101
+0105000382010f00 3082010a02820101
+00b13d84a3caf995 841429cdcb837d0a
+7bf31721d3e2d2cb 9e938b8e11163a53
+5921eec30c3f8143 ad1d317f6bed2cd7
+eef31f9694762ba1 32d148fb5204f579
+69458b0cccc0e942 f405e5f861b03119
+a3933e4e5b24cd11 379f6b5f8030289a
+336eef6aac592a9f a20fcb8b45f55e8e
+97e98b58bbcd8768 6a830b1c6f69bd21
+4ec9254ce6d67d49 b7eedbde3fa89890
+ac4db46c34cb123f cedbac99711cd6d9
+866796dbd20d0068 db7abd19789b41cf
+3e4885403853c498 1ec35923161307e4
+5a05777376589bd1 dea6e81441110bd6
+e21cbf9120eb50c0 b3f4ccc6fa08edcf
+8a074a75cde6a762 e8ecfee35904cc66
+08e78bec4ed4ec4e 91698610220278a1
+c30203010001
+```
+
+按照TLV的模式尝试进行解析。首先开头第一个字节`0x30`对应`SEQUENCE`，后续一个字节`0x82`的最高位为`1`，所以这个字节将表示后续有几个字节表示数据长度，即`0x82 & 0x7f`，也就是后续两字节表示长度：`0x0122`，即后续290个字节是数据，正好是剩下全部的数据，得到初步结果：
+
+```HEX
+30 82 01 22 -- SEQUENCE
+    300d06092a864886f ....
+```
+
+继续解析得到
+
+```HEX
+    30 82 01 22 -- SEQUENCE length: 0122
+        30 0d   -- SEQUENCE length: 0d
+            06 09   -- OBJECT IDENTIFIER length: 09
+                2a864886f70d010101
+            05 00   -- NULL length: 00
+        03 82 01 0f -- BIT STRING length: 010f
+            00  -- Unused bits = 00
+            3082010a0282010100b13d84a3caf995841429cdcb837d0a7bf31721d3e2d2cb9e938b8e11163a535921eec30c3f8143ad1d317f6bed2cd7eef31f9694762ba132d148fb5204f57969458b0cccc0e942f405e5f861b03119a3933e4e5b24cd11379f6b5f8030289a336eef6aac592a9fa20fcb8b45f55e8e97e98b58bbcd87686a830b1c6f69bd214ec9254ce6d67d49b7eedbde3fa89890ac4db46c34cb123fcedbac99711cd6d9866796dbd20d0068db7abd19789b41cf3e4885403853c4981ec35923161307e45a05777376589bd1dea6e81441110bd6e21cbf9120eb50c0b3f4ccc6fa08edcf8a074a75cde6a762e8ecfee35904cc6608e78bec4ed4ec4e91698610220278a1c30203010001
+```
+
+到这里，第一层解析完毕，最后的`BIT STRING`是公钥`(n, e)`编码后的结果，继续解析：
+
+```HEX
+    30 82 01 0a -- SEQUENCE length: 010a
+        02 82 01 01 -- INTEGER length: 0101
+            00b13d84a3caf995841429cdcb837d0a7bf31721d3e2d2cb9e938b8e11163a535921eec30c3f8143ad1d317f6bed2cd7eef31f9694762ba132d148fb5204f57969458b0cccc0e942f405e5f861b03119a3933e4e5b24cd11379f6b5f8030289a336eef6aac592a9fa20fcb8b45f55e8e97e98b58bbcd87686a830b1c6f69bd214ec9254ce6d67d49b7eedbde3fa89890ac4db46c34cb123fcedbac99711cd6d9866796dbd20d0068db7abd19789b41cf3e4885403853c4981ec35923161307e45a05777376589bd1dea6e81441110bd6e21cbf9120eb50c0b3f4ccc6fa08edcf8a074a75cde6a762e8ecfee35904cc6608e78bec4ed4ec4e91698610220278a1c3
+        02 03 -- INTEGER length: 03
+            010001
+```
+
+## RSA私钥（[PKCS#8](https://en.wikipedia.org/wiki/PKCS_8)）
+
+Because RSA is not used exclusively inside X509, SSL and TLS, a more generic key format, PKCS#8, is available. It identifies the type of private key and contains the relevant data. The unencrypted PKCS#8 encoded data starts and ends with the tags:
+
+```PEM
+-----BEGIN PRIVATE KEY-----
+BASE64 ENCODED DATA
+-----END PRIVATE KEY-----
+```
+
+Within the base64 encoded data, the following DER structure is present:
+
+```ASN.1
+PrivateKeyInfo ::= SEQUENCE {
+    version Version,
+    algorithm   AlgorithmIdentifier,
+    PrivateKey  BIT STRING
+}
+
+AlgorithmIdentifier ::= SEQUENCE {
+    algorithm   OBJECT IDENTIFIER,
+    parameters  ANY DEFINED BY algorithm OPTIONAL
+}
+```
+
+So for an RSA private key, the OID is 1.2.840.113549.1.1.1, and the RSAPrivateKey is the PrivateKey key data bitstring.
+
+The encrypted PKCS#8 encoded data starts and ends with the tags:
+
+```PEM
+-----BEGIN ENCRYPTED PRIVATE KEY-----
+BASE64 ENCODED DATA
+-----END ENCRYPTED PRIVATE KEY-----
+```
+
+Within the base64 encoded data, the following DER structure is present:
+
+```ASN.1
+EncryptedPrivateKeyInfo ::= SEQUENCE {
+    encryptionAlgorithm  EncryptionAlgorithmIdentifier,
+    encryptedDataEncryptedData
+}
+
+EncryptionAlgorithmIdentifier ::= AlgorithmIdentifier
+
+EncryptedData ::= OCTET STRING
+```
+
+The EncryptedData OCTET STRING is a PKCS#8 PrivateKeyInfo, as described earlier.
+
+参考上面私钥的解析流程，例如下面的私钥：
+
+```PEM
+-----BEGIN PRIVATE KEY-----
+MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCxPYSjyvmVhBQp
+zcuDfQp78xch0+LSy56Ti44RFjpTWSHuwww/gUOtHTF/a+0s1+7zH5aUdiuhMtFI
++1IE9XlpRYsMzMDpQvQF5fhhsDEZo5M+TlskzRE3n2tfgDAomjNu72qsWSqfog/L
+i0X1Xo6X6YtYu82HaGqDCxxvab0hTsklTObWfUm37tveP6iYkKxNtGw0yxI/ztus
+mXEc1tmGZ5bb0g0AaNt6vRl4m0HPPkiFQDhTxJgew1kjFhMH5FoFd3N2WJvR3qbo
+FEERC9biHL+RIOtQwLP0zMb6CO3PigdKdc3mp2Lo7P7jWQTMZgjni+xO1OxOkWmG
+ECICeKHDAgMBAAECggEAN7o+ADoLq4UxycsZGCiyqTJPraUvhlPbckzIyHqSsC4w
+SyAss7LzEnVBYO0QT689RFhEQj29jhuqTiYnLcP4/q6M/+NJLI6Op2Qdaqm5ZnRW
+EZsVcUbBCRoo6oglnD6PuWuxwKrwieysxrTttC6c6wrVc3rpLpAYHUfbEvTOMLBM
+3FO/sqexuZGdfjNfA88SwTn9f7sgzwO9QVHmcm4B+YFq7l9bhaxQQRxjCDMLHkc3
+Yqmh4AqLmr0kBb2o6GgHEY5YfvuxgOBBx/ZkhAwr3FkgeU/CAdDQvtr3upnajhLV
+meYxcCkQgwavnqK1J0tcvwXbJfWl72e8I2463wCG0QKBgQDezeKaFhfhbVzaKaJB
+yHUtAJ0kV9jRkGQZwNZH0eOu8NX4HhkRNkTpygBtUAQCGnmfZAEhhTK47qYKw02U
+SsOFta2kgQg0MEru6qibu04Zee4QETXcHcdQemt/nsIdzmEbBRflFZvucEVGF4JF
+nrRJP5D+uRFuwe9wjYPTyW2jBQKBgQDLpcAr0vboUBg3ubj93msTXIlepr81wC6Z
+aC6z3HLzOxuj9ivz2b8XKsDYVFh+VE63K4VALnMdkCoLE8FBqejnrDoXi4mYy+tl
+ZTRt+FUPXwa++VffmOlnqA12TFLmEdcBh+9Ste4m32IXmLMLSQUPgpPo5CV9I4Iy
+4AT1oKNcJwKBgGxzEsWl02Hq9bNLaKtUg5SwI8045VS8T70pXCQBSi4xFDV9kP4L
+yGdz59lNhWXwtRqcduB2EUZrA29huTVhXuKKmEbmd7PPfenlVsTW2yETdIllly3Z
+YNcPf5vTDvGrLyETzZm4dvoMs+t2LfbtVRwCUPVr58xdocrLV0uTVEZxAoGAeYkK
+Dx1wTWS/j0I/rQK4VG29bceGBcYUCWmrtZuy3oZAELIxuO4SpPjW7kQoK/yUnaxT
+ceJGwTXwYXwAsfd9EAYxBSw5if7pFTI5AAhcezfzBrY4QzE22q3omtkiADxVXIyL
+v4jkAD8Ag6SV9f42DvOW4j6GQRCX+1TGoPCljbECgYEAhsyO5v5YJsG59KQ1c4H+
+ES2opyNhDmRNNkbnqY44O4P852QswZT4+VugcxdUnpQRiUPa5t3vJrB46evBj7Lt
+PXJnjhddy1jiH8e2wO7efTmZyu8BFqS9TRIoqJ9MA/UT7KUaTUGCTfZtSv5IFVMS
+uB/3IQ01eT8yujJvWNBn9K4=
+-----END PRIVATE KEY-----
+```
+
+BASE64转换HEX后得到：
+
+```binary
+308204bd02010030 0d06092a864886f7
+0d01010105000482 04a7308204a30201
+000282010100b13d 84a3caf995841429
+cdcb837d0a7bf317 21d3e2d2cb9e938b
+8e11163a535921ee c30c3f8143ad1d31
+7f6bed2cd7eef31f 9694762ba132d148
+fb5204f57969458b 0cccc0e942f405e5
+f861b03119a3933e 4e5b24cd11379f6b
+5f8030289a336eef 6aac592a9fa20fcb
+8b45f55e8e97e98b 58bbcd87686a830b
+1c6f69bd214ec925 4ce6d67d49b7eedb
+de3fa89890ac4db4 6c34cb123fcedbac
+99711cd6d9866796 dbd20d0068db7abd
+19789b41cf3e4885 403853c4981ec359
+23161307e45a0577 7376589bd1dea6e8
+1441110bd6e21cbf 9120eb50c0b3f4cc
+c6fa08edcf8a074a 75cde6a762e8ecfe
+e35904cc6608e78b ec4ed4ec4e916986
+10220278a1c30203 0100010282010037
+ba3e003a0bab8531 c9cb191828b2a932
+4fada52f8653db72 4cc8c87a92b02e30
+4b202cb3b2f31275 4160ed104faf3d44
+5844423dbd8e1baa 4e26272dc3f8feae
+8cffe3492c8e8ea7 641d6aa9b9667456
+119b157146c1091a 28ea88259c3e8fb9
+6bb1c0aaf089ecac c6b4edb42e9ceb0a
+d5737ae92e90181d 47db12f4ce30b04c
+dc53bfb2a7b1b991 9d7e335f03cf12c1
+39fd7fbb20cf03bd 4151e6726e01f981
+6aee5f5b85ac5041 1c6308330b1e4737
+62a9a1e00a8b9abd 2405bda8e8680711
+8e587efbb180e041 c7f664840c2bdc59
+20794fc201d0d0be daf7ba99da8e12d5
+99e6317029108306 af9ea2b5274b5cbf
+05db25f5a5ef67bc 236e3adf0086d102
+818100decde29a16 17e16d5cda29a241
+c8752d009d2457d8 d1906419c0d647d1
+e3aef0d5f81e1911 3644e9ca006d5004
+021a799f64012185 32b8eea60ac34d94
+4ac385b5ada48108 34304aeeeaa89bbb
+4e1979ee101135dc 1dc7507a6b7f9ec2
+1dce611b0517e515 9bee704546178245
+9eb4493f90feb911 6ec1ef708d83d3c9
+6da30502818100cb a5c02bd2f6e85018
+37b9b8fdde6b135c 895ea6bf35c02e99
+682eb3dc72f33b1b a3f62bf3d9bf172a
+c0d854587e544eb7 2b85402e731d902a
+0b13c141a9e8e7ac 3a178b8998cbeb65
+65346df8550f5f06 bef957df98e967a8
+0d764c52e611d701 87ef52b5ee26df62
+1798b30b49050f82 93e8e4257d238232
+e004f5a0a35c2702 81806c7312c5a5d3
+61eaf5b34b68ab54 8394b023cd38e554
+bc4fbd295c24014a 2e3114357d90fe0b
+c86773e7d94d8565 f0b51a9c76e07611
+466b036f61b93561 5ee28a9846e677b3
+cf7de9e556c4d6db 2113748965972dd9
+60d70f7f9bd30ef1 ab2f2113cd99b876
+fa0cb3eb762df6ed 551c0250f56be7cc
+5da1cacb574b9354 467102818079890a
+0f1d704d64bf8f42 3fad02b8546dbd6d
+c78605c6140969ab b59bb2de864010b2
+31b8ee12a4f8d6ee 44282bfc949dac53
+71e246c135f0617c 00b1f77d10063105
+2c3989fee9153239 00085c7b37f306b6
+38433136daade89a d922003c555c8c8b
+bf88e4003f0083a4 95f5fe360ef396e2
+3e86411097fb54c6 a0f0a58db1028181
+0086cc8ee6fe5826 c1b9f4a4357381fe
+112da8a723610e64 4d3646e7a98e383b
+83fce7642cc194f8 f95ba07317549e94
+118943dae6ddef26 b078e9ebc18fb2ed
+3d72678e175dcb58 e21fc7b6c0eede7d
+3999caef0116a4bd 4d1228a89f4c03f5
+13eca51a4d41824d f66d4afe48155312
+b81ff7210d35793f 32ba326f58d067f4
+ae
+```
+
+不断解析，我们将得到：
+
+```ASN.1
+SEQUENCE (3 elem)
+    INTEGER 0
+    SEQUENCE (2 elem)
+        OBJECT IDENTIFIER 1.2.840.113549.1.1.1 rsaEncryption (PKCS #1)
+        NULL
+    OCTET STRING (1191 byte) 308204A30201000282010100B13D84A3CAF995841429CDCB837D0A7BF31721D3E2D2…
+        SEQUENCE (9 elem)
+            INTEGER 0
+            INTEGER (2048 bit) 223745156967029538328264644550067241746963682419446860012832141178016…
+            INTEGER 65537
+            INTEGER (2046 bit) 703494622039856976485377918671694704279709727319700626733664815465188…
+            INTEGER (1024 bit) 156458457314751251802464090229302212722265433358237933462881929269541…
+            INTEGER (1024 bit) 143006112170028629464921534572948288631720566279901867913109493261006…
+            INTEGER (1023 bit) 761558324052148394418207192626263116383152619761018978205583646443744…
+            INTEGER (1023 bit) 853449968597000130557091575784236914256657275789175863682734714806059…
+            INTEGER (1024 bit) 946591158936087577749692267018727963148295124545865623013531574381374…
+```
+
+## 有用的参考
+
+* [ASN.1 key structures in DER and PEM](https://mbed-tls.readthedocs.io/en/latest/kb/cryptography/asn1-key-structures-in-der-and-pem/#formats)
+* [ASN.1 JavaScript decoder](https://lapo.it/asn1js/)
+* [ASN.1 Type System](https://learn.microsoft.com/en-us/windows/win32/seccertenroll/about-asn-1-type-system)

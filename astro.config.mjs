@@ -20,6 +20,10 @@ export default defineConfig({
 					label: '捐赠支持',
 					autogenerate: { directory: 'sponsor' },
 				},
+				{
+					label: '密码与密码运算',
+					autogenerate: { directory: 'cryptography' },
+				},
 			],
 		}),
 	],
