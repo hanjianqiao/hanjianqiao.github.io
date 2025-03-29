@@ -10,7 +10,7 @@ export default defineConfig({
 			defaultLocale: 'zh-CN',
 			routeMiddleware: './src/middleware/routeMiddleware.ts',
 			social: {
-				email: 'mailto:hanjianqiao@gmail.com',
+				email: 'mailto:lanchitour@gmail.com',
 			},
 			components: {
 				PageFrame: './src/components/PageFrame.astro',
