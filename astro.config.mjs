@@ -24,6 +24,10 @@ export default defineConfig({
 					label: '密码与密码运算',
 					autogenerate: { directory: 'cryptography' },
 				},
+				{
+					label: '操作系统',
+					autogenerate: { directory: 'operating_systems' },
+				},
 			],
 		}),
 	],
