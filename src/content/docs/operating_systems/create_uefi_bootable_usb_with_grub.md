@@ -4,4 +4,11 @@ description: A guide in my new Starlight docs site.
 template: doc
 ---
 
-暂无
+## 工具准备
+
+* U盘一个
+* ubuntu系统（本文使用的是ubuntu）
+
+## 开始制作
+
+
