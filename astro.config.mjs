@@ -28,6 +28,10 @@ export default defineConfig({
 					label: '操作系统',
 					autogenerate: { directory: 'operating_systems' },
 				},
+				{
+					label: '实操杂谈',
+					autogenerate: { directory: 'practical_talk' },
+				},
 			],
 		}),
 	],
