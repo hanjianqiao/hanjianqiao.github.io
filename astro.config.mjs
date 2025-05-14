@@ -29,7 +29,7 @@ export default defineConfig({
 					autogenerate: { directory: 'operating_systems' },
 				},
 				{
-					label: '实操杂谈',
+					label: '实践杂谈',
 					autogenerate: { directory: 'practical_talk' },
 				},
 			],
